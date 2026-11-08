@@ -8,35 +8,34 @@ plugins {
 
 kotlin {
     jvm()
-    
+
     js {
         browser()
     }
-    
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
+
+    @OptIn(ExperimentalWasmDsl::class) wasmJs {
         browser()
     }
-    
-    androidLibrary {
-       namespace = "com.app.shubhrmodh.core"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+
+    android {
+        namespace = "com.app.shubhrmodh.core"
+        compileSdk = 37
+        minSdk = 24
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
-    
+
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

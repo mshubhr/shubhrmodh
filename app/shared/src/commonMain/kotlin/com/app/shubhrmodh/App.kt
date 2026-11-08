@@ -1,49 +1,109 @@
 package com.app.shubhrmodh
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import shubhrmodh.app.shared.generated.resources.Res
-import shubhrmodh.app.shared.generated.resources.compose_multiplatform
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.unit.dp
+import com.app.shubhrmodh.components.*
+import com.app.shubhrmodh.theme.BgDark
+import com.app.shubhrmodh.theme.PortfolioTheme
+import kotlinx.coroutines.launch
 
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    PortfolioTheme {
+        var currentSection by remember { mutableStateOf(PortfolioSection.HOME) }
+        val scrollState = rememberScrollState()
+        val coroutineScope = rememberCoroutineScope()
+
+        val sectionPositions = remember { mutableStateMapOf<PortfolioSection, Float>() }
+
+        fun scrollTo(section: PortfolioSection) {
+            currentSection = section
+            val position = sectionPositions[section] ?: 0f
+            coroutineScope.launch {
+                scrollState.animateScrollTo(position.toInt().coerceAtLeast(0))
+            }
+        }
+
+        Box(
+            modifier = Modifier.fillMaxSize().background(BgDark)
         ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+            Column(
+                modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(72.dp))
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.HOME] = coordinates.positionInParent().y
+                    }) {
+                    HeroSection(
+                        onExploreProjects = { scrollTo(PortfolioSection.PROJECTS) },
+                        onContactClick = { scrollTo(PortfolioSection.CONTACT) })
                 }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.ABOUT] = coordinates.positionInParent().y
+                    }) {
+                    AboutSection()
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.EXPERIENCE] =
+                            coordinates.positionInParent().y
+                    }) {
+                    ExperienceSection()
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.PROJECTS] =
+                            coordinates.positionInParent().y
+                    }) {
+                    ProjectsSection()
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.SKILLS] = coordinates.positionInParent().y
+                    }) {
+                    SkillsSection()
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.ACHIEVEMENTS] =
+                            coordinates.positionInParent().y
+                    }) {
+                    AchievementsSection()
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
+                        sectionPositions[PortfolioSection.CONTACT] =
+                            coordinates.positionInParent().y
+                    }) {
+                    ContactSection()
+                }
+
+                FooterSection()
             }
+
+            Navbar(
+                currentSection = currentSection,
+                onNavigate = { section -> scrollTo(section) },
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
