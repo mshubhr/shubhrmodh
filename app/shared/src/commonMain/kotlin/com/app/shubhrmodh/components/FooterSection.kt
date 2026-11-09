@@ -1,8 +1,16 @@
 package com.app.shubhrmodh.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.data.PortfolioRepository
-import com.app.shubhrmodh.theme.*
+import com.app.shubhrmodh.theme.BorderWhite
+import com.app.shubhrmodh.theme.PureBlack
+import com.app.shubhrmodh.theme.PureWhite
+import com.app.shubhrmodh.theme.White50
+import com.app.shubhrmodh.theme.White70
 
 @Composable
 fun FooterSection(modifier: Modifier = Modifier) {
@@ -20,12 +32,12 @@ fun FooterSection(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
 
     Column(
-        modifier = modifier.fillMaxWidth().background(BgDark)
+        modifier = modifier.fillMaxWidth().background(PureBlack)
             .padding(top = 40.dp, bottom = 32.dp, start = 24.dp, end = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HorizontalDivider(
-            color = BorderDark,
+            color = BorderWhite,
             thickness = 1.dp,
             modifier = Modifier.fillMaxWidth().widthIn(max = 980.dp)
         )
@@ -34,7 +46,7 @@ fun FooterSection(modifier: Modifier = Modifier) {
 
         Text(
             text = "Shubhr Modh",
-            color = TextPrimaryDark,
+            color = PureWhite,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
@@ -43,7 +55,7 @@ fun FooterSection(modifier: Modifier = Modifier) {
 
         Text(
             text = "Keeping the app lightweight and optimized.",
-            color = PrimaryCyan,
+            color = White70,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
@@ -73,7 +85,7 @@ fun FooterSection(modifier: Modifier = Modifier) {
 
         Text(
             text = "Built with Kotlin Multiplatform & Compose • Deployed at ${contact.portfolioUrl}",
-            color = TextMutedDark,
+            color = White50,
             fontSize = 12.sp,
             textAlign = TextAlign.Center
         )

@@ -1,9 +1,21 @@
 package com.app.shubhrmodh.components
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.data.SkillCategory
-import com.app.shubhrmodh.theme.*
+import com.app.shubhrmodh.theme.BorderWhite
+import com.app.shubhrmodh.theme.PureBlack
+import com.app.shubhrmodh.theme.PureWhite
+import com.app.shubhrmodh.theme.White08
+import com.app.shubhrmodh.theme.White70
 
 @Composable
 fun SkillsSection(modifier: Modifier = Modifier) {
@@ -36,7 +52,7 @@ fun SkillsSection(modifier: Modifier = Modifier) {
 
             Text(
                 text = "Technologies & Tooling",
-                color = TextPrimaryDark,
+                color = PureWhite,
                 fontSize = if (isMobile) 24.sp else 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -45,7 +61,7 @@ fun SkillsSection(modifier: Modifier = Modifier) {
 
             Text(
                 text = "Specialized in modern Android, Kotlin Multiplatform, and reactive architecture",
-                color = TextSecondaryDark,
+                color = White70,
                 fontSize = 14.sp
             )
 
@@ -88,14 +104,14 @@ fun SkillCategoryCard(
 ) {
     Card(
         modifier = modifier
-            .border(1.dp, BorderDark, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+            .border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = White08),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = category.title,
-                color = PrimaryCyan,
+                color = PureWhite,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -110,12 +126,11 @@ fun SkillCategoryCard(
                 category.skills.forEach { skill ->
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = CardDarkElevated,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, BorderDark)
+                        color = PureWhite
                     ) {
                         Text(
                             text = skill,
-                            color = TextPrimaryDark,
+                            color = PureBlack,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)

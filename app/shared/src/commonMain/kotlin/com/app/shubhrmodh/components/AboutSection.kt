@@ -23,16 +23,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.shubhrmodh.data.EducationItem
 import com.app.shubhrmodh.data.PortfolioRepository
-import com.app.shubhrmodh.theme.AccentEmerald
-import com.app.shubhrmodh.theme.AccentIndigo
-import com.app.shubhrmodh.theme.BorderDark
-import com.app.shubhrmodh.theme.BorderGlow
-import com.app.shubhrmodh.theme.CardDark
-import com.app.shubhrmodh.theme.CardDarkElevated
-import com.app.shubhrmodh.theme.PrimaryCyan
-import com.app.shubhrmodh.theme.TextPrimaryDark
-import com.app.shubhrmodh.theme.TextSecondaryDark
+import com.app.shubhrmodh.theme.BorderWhite
+import com.app.shubhrmodh.theme.BorderWhiteBold
+import com.app.shubhrmodh.theme.PureBlack
+import com.app.shubhrmodh.theme.PureWhite
+import com.app.shubhrmodh.theme.White08
+import com.app.shubhrmodh.theme.White50
+import com.app.shubhrmodh.theme.White70
+
+data class AboutPillar(
+    val title: String,
+    val desc: String
+)
 
 @Composable
 fun AboutSection(modifier: Modifier = Modifier) {
@@ -54,7 +58,7 @@ fun AboutSection(modifier: Modifier = Modifier) {
 
             Text(
                 text = "Building Scalable & Delightful Mobile Experiences",
-                color = TextPrimaryDark,
+                color = PureWhite,
                 fontSize = if (isMobile) 24.sp else 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -82,18 +86,17 @@ fun AboutSection(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(24.dp))
 
             val pillars = listOf(
-                Triple(
+                AboutPillar(
                     "⚡ Modern Jetpack Compose",
-                    "Declarative UIs, smooth animations, M3 theming, MotionLayout, and custom components.",
-                    PrimaryCyan
-                ), Triple(
+                    "Declarative UIs, smooth animations, M3 theming, MotionLayout, and custom components."
+                ),
+                AboutPillar(
                     "🌐 Kotlin Multiplatform",
-                    "KMP shared networking and business logic with Ktor, achieving 85%+ reuse across Android & iOS.",
-                    AccentIndigo
-                ), Triple(
+                    "KMP shared networking and business logic with Ktor, achieving 85%+ reuse across Android & iOS."
+                ),
+                AboutPillar(
                     "🛡️ High Reliability",
-                    "Deep experience optimizing 16KB page-sizes, SDK 35 migrations, R8 rules, and crash rate reduction.",
-                    AccentEmerald
+                    "Deep experience optimizing 16KB page-sizes, SDK 35 migrations, R8 rules, and crash rate reduction."
                 )
             )
 
@@ -102,11 +105,9 @@ fun AboutSection(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    pillars.forEach { (title, desc, color) ->
+                    pillars.forEach { pillar ->
                         PillarCard(
-                            title = title,
-                            desc = desc,
-                            color = color,
+                            pillar = pillar,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -116,11 +117,9 @@ fun AboutSection(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    pillars.forEach { (title, desc, color) ->
+                    pillars.forEach { pillar ->
                         PillarCard(
-                            title = title,
-                            desc = desc,
-                            color = color,
+                            pillar = pillar,
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -133,28 +132,28 @@ fun AboutSection(modifier: Modifier = Modifier) {
 @Composable
 fun BioCard(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier.border(1.dp, BorderDark, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = modifier.border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = White08),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
             Text(
                 text = "Professional Background",
-                color = TextPrimaryDark,
+                color = PureWhite,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "I am an Android Developer with 2+ years of hands-on experience building, scaling, and publishing Android applications on Google Play Store. I focus on Clean Architecture, MVVM, asynchronous state handling with Kotlin Coroutines & Flow, and rock-solid offline-first storage with Room.",
-                color = TextSecondaryDark,
+                color = White70,
                 fontSize = 14.sp,
                 lineHeight = 22.sp
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "My work spans real-time interactive apps with Agora audio/video calling, FCM push notifications, AWS Rekognition biometric verification, Google Maps integrations, and full Android system features such as sticky notifications, overlay permissions, and Wake Locks.",
-                color = TextSecondaryDark,
+                color = White70,
                 fontSize = 14.sp,
                 lineHeight = 22.sp
             )
@@ -164,11 +163,11 @@ fun BioCard(modifier: Modifier = Modifier) {
 
 @Composable
 fun EducationCard(
-    education: com.app.shubhrmodh.data.EducationItem, modifier: Modifier = Modifier
+    education: EducationItem, modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.border(1.dp, BorderDark, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = modifier.border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = White08),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -179,12 +178,12 @@ fun EducationCard(
                 Icon(
                     imageVector = CustomIcons.School,
                     contentDescription = "Education",
-                    tint = PrimaryCyan,
+                    tint = PureWhite,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
                     text = "Education",
-                    color = TextPrimaryDark,
+                    color = PureWhite,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -194,7 +193,7 @@ fun EducationCard(
 
             Text(
                 text = education.institution,
-                color = PrimaryCyan,
+                color = PureWhite,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -203,7 +202,7 @@ fun EducationCard(
 
             Text(
                 text = education.degree,
-                color = TextPrimaryDark,
+                color = White70,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -216,16 +215,15 @@ fun EducationCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = education.period, color = TextSecondaryDark, fontSize = 13.sp
+                    text = education.period, color = White50, fontSize = 13.sp
                 )
                 Surface(
-                    color = CardDarkElevated,
-                    shape = RoundedCornerShape(8.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, BorderGlow)
+                    color = PureWhite,
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = education.cgpa,
-                        color = AccentEmerald,
+                        color = PureBlack,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -238,23 +236,21 @@ fun EducationCard(
 
 @Composable
 fun PillarCard(
-    title: String,
-    desc: String,
-    color: androidx.compose.ui.graphics.Color,
+    pillar: AboutPillar,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.border(1.dp, BorderDark, RoundedCornerShape(14.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardDarkElevated),
+        modifier = modifier.border(1.dp, BorderWhite, RoundedCornerShape(14.dp)),
+        colors = CardDefaults.cardColors(containerColor = White08),
         shape = RoundedCornerShape(14.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
             Text(
-                text = title, color = color, fontSize = 15.sp, fontWeight = FontWeight.Bold
+                text = pillar.title, color = PureWhite, fontSize = 15.sp, fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = desc, color = TextSecondaryDark, fontSize = 13.sp, lineHeight = 19.sp
+                text = pillar.desc, color = White70, fontSize = 13.sp, lineHeight = 19.sp
             )
         }
     }
@@ -264,12 +260,12 @@ fun PillarCard(
 fun SectionBadge(title: String) {
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = CardDarkElevated,
-        border = androidx.compose.foundation.BorderStroke(1.dp, BorderGlow)
+        color = White08,
+        border = androidx.compose.foundation.BorderStroke(1.dp, BorderWhiteBold)
     ) {
         Text(
             text = title,
-            color = PrimaryCyan,
+            color = PureWhite,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,

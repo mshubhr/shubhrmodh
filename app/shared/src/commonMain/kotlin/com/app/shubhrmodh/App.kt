@@ -1,109 +1,72 @@
 package com.app.shubhrmodh
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.unit.dp
-import com.app.shubhrmodh.components.*
-import com.app.shubhrmodh.theme.BgDark
+import androidx.compose.ui.tooling.preview.Preview
+import com.app.shubhrmodh.components.launcher.AndroidHomeScreen
+import com.app.shubhrmodh.components.media.ExoPlayerScreen
+import com.app.shubhrmodh.components.screens.AboutScreen
+import com.app.shubhrmodh.components.screens.AchievementsScreen
+import com.app.shubhrmodh.components.screens.ContactScreen
+import com.app.shubhrmodh.components.screens.ExperienceScreen
+import com.app.shubhrmodh.components.screens.ProjectsScreen
+import com.app.shubhrmodh.components.screens.RecentsScreen
+import com.app.shubhrmodh.components.screens.SkillsScreen
+import com.app.shubhrmodh.navigation.NavDisplay
+import com.app.shubhrmodh.navigation.NavKey
+import com.app.shubhrmodh.navigation.rememberNav3BackStack
 import com.app.shubhrmodh.theme.PortfolioTheme
-import kotlinx.coroutines.launch
+import com.app.shubhrmodh.theme.PureBlack
 
 @Composable
+@Preview
 fun App() {
     PortfolioTheme {
-        var currentSection by remember { mutableStateOf(PortfolioSection.HOME) }
-        val scrollState = rememberScrollState()
-        val coroutineScope = rememberCoroutineScope()
-
-        val sectionPositions = remember { mutableStateMapOf<PortfolioSection, Float>() }
-
-        fun scrollTo(section: PortfolioSection) {
-            currentSection = section
-            val position = sectionPositions[section] ?: 0f
-            coroutineScope.launch {
-                scrollState.animateScrollTo(position.toInt().coerceAtLeast(0))
-            }
-        }
+        val backStack = rememberNav3BackStack(initial = NavKey.Home)
 
         Box(
-            modifier = Modifier.fillMaxSize().background(BgDark)
+            modifier = Modifier.fillMaxSize().background(PureBlack)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(72.dp))
 
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.HOME] = coordinates.positionInParent().y
-                    }) {
-                    HeroSection(
-                        onExploreProjects = { scrollTo(PortfolioSection.PROJECTS) },
-                        onContactClick = { scrollTo(PortfolioSection.CONTACT) })
+            NavDisplay(backStack = backStack) { key ->
+                when (key) {
+                    is NavKey.Home -> AndroidHomeScreen(
+                        onNavigate = { dest -> backStack.navigateTo(dest) })
+
+                    is NavKey.About -> AboutScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.Experience -> ExperienceScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.Projects -> ProjectsScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.ProjectDetail -> ProjectsScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.Skills -> SkillsScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.ExoPlayer -> ExoPlayerScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.Achievements -> AchievementsScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.Contact -> ContactScreen(
+                        onBack = { backStack.pop() })
+
+                    is NavKey.Recents -> RecentsScreen(onSelectKey = { dest ->
+                        backStack.navigateTo(
+                            dest
+                        )
+                    }, onClearAll = { backStack.popToHome() })
                 }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.ABOUT] = coordinates.positionInParent().y
-                    }) {
-                    AboutSection()
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.EXPERIENCE] =
-                            coordinates.positionInParent().y
-                    }) {
-                    ExperienceSection()
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.PROJECTS] =
-                            coordinates.positionInParent().y
-                    }) {
-                    ProjectsSection()
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.SKILLS] = coordinates.positionInParent().y
-                    }) {
-                    SkillsSection()
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.ACHIEVEMENTS] =
-                            coordinates.positionInParent().y
-                    }) {
-                    AchievementsSection()
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth().onGloballyPositioned { coordinates ->
-                        sectionPositions[PortfolioSection.CONTACT] =
-                            coordinates.positionInParent().y
-                    }) {
-                    ContactSection()
-                }
-
-                FooterSection()
             }
-
-            Navbar(
-                currentSection = currentSection,
-                onNavigate = { section -> scrollTo(section) },
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 }

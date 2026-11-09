@@ -30,22 +30,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.data.PortfolioRepository
-import com.app.shubhrmodh.theme.AccentEmerald
-import com.app.shubhrmodh.theme.AccentIndigo
-import com.app.shubhrmodh.theme.BgDark
-import com.app.shubhrmodh.theme.BorderDark
-import com.app.shubhrmodh.theme.BorderGlow
-import com.app.shubhrmodh.theme.CardDark
-import com.app.shubhrmodh.theme.CardDarkElevated
-import com.app.shubhrmodh.theme.PrimaryCyan
-import com.app.shubhrmodh.theme.TextPrimaryDark
-import com.app.shubhrmodh.theme.TextSecondaryDark
+import com.app.shubhrmodh.theme.BorderWhite
+import com.app.shubhrmodh.theme.BorderWhiteBold
+import com.app.shubhrmodh.theme.PureBlack
+import com.app.shubhrmodh.theme.PureWhite
+import com.app.shubhrmodh.theme.White08
+import com.app.shubhrmodh.theme.White70
 
 @Composable
 fun HeroSection(
@@ -67,8 +64,8 @@ fun HeroSection(
 
             Surface(
                 shape = RoundedCornerShape(30.dp),
-                color = CardDarkElevated,
-                border = androidx.compose.foundation.BorderStroke(1.dp, BorderGlow),
+                color = White08,
+                border = androidx.compose.foundation.BorderStroke(1.dp, BorderWhiteBold),
                 modifier = Modifier.padding(bottom = 24.dp)
             ) {
                 Row(
@@ -76,12 +73,12 @@ fun HeroSection(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
-                        modifier = Modifier.size(10.dp).clip(CircleShape).background(AccentEmerald)
+                        modifier = Modifier.size(10.dp).clip(CircleShape).background(PureWhite)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Available for Android & Mobile Engineering Roles",
-                        color = PrimaryCyan,
+                        color = PureWhite,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -90,7 +87,7 @@ fun HeroSection(
 
             Text(
                 text = "Hi, I'm ${contact.name}",
-                color = TextPrimaryDark,
+                color = PureWhite,
                 fontSize = if (isMobile) 32.sp else 54.sp,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
@@ -104,14 +101,14 @@ fun HeroSection(
                 fontSize = if (isMobile) 22.sp else 34.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                color = AccentIndigo
+                color = White70
             )
 
             Spacer(modifier = Modifier.height(18.dp))
 
             Text(
                 text = contact.summary,
-                color = TextSecondaryDark,
+                color = White70,
                 fontSize = if (isMobile) 15.sp else 17.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 26.sp,
@@ -127,7 +124,7 @@ fun HeroSection(
                 Button(
                     onClick = onContactClick,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryCyan, contentColor = BgDark
+                        containerColor = PureWhite, contentColor = PureBlack
                     ),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp)
@@ -141,10 +138,10 @@ fun HeroSection(
                     onClick = onExploreProjects,
                     shape = RoundedCornerShape(12.dp),
                     border = androidx.compose.foundation.BorderStroke(
-                        1.dp, PrimaryCyan.copy(alpha = 0.6f)
+                        1.dp, PureWhite
                     ),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = PrimaryCyan
+                        contentColor = PureWhite
                     ),
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp)
                 ) {
@@ -228,8 +225,8 @@ fun StatCard(
     value: String, label: String, modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.border(1.dp, BorderDark, RoundedCornerShape(14.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = modifier.border(1.dp, BorderWhite, RoundedCornerShape(14.dp)),
+        colors = CardDefaults.cardColors(containerColor = White08),
         shape = RoundedCornerShape(14.dp)
     ) {
         Column(
@@ -238,14 +235,14 @@ fun StatCard(
         ) {
             Text(
                 text = value,
-                color = PrimaryCyan,
+                color = PureWhite,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
-                color = TextSecondaryDark,
+                color = White70,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center
@@ -256,17 +253,17 @@ fun StatCard(
 
 @Composable
 fun SocialIconButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector, contentDesc: String, onClick: () -> Unit
+    icon: ImageVector, contentDesc: String, onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier.size(42.dp).clip(CircleShape).background(CardDarkElevated)
-            .border(1.dp, BorderDark, CircleShape).clickable(onClick = onClick),
+        modifier = Modifier.size(42.dp).clip(CircleShape).background(White08)
+            .border(1.dp, BorderWhite, CircleShape).clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             imageVector = icon,
             contentDescription = contentDesc,
-            tint = TextPrimaryDark,
+            tint = PureWhite,
             modifier = Modifier.size(20.dp)
         )
     }

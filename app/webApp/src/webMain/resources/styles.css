@@ -5,3 +5,23 @@ html, body {
     padding: 0;
     overflow: hidden;
 }
+
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: #FFFFFF !important;
+        color: #09090B !important;
+    }
+    #loader p {
+        color: #64748B !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+    }
+    #loader p {
+        color: #94A3B8 !important;
+    }
+}
