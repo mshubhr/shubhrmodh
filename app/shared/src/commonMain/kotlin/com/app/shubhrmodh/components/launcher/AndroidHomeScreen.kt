@@ -1,5 +1,6 @@
 package com.app.shubhrmodh.components.launcher
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -62,8 +63,7 @@ import com.app.shubhrmodh.theme.White70
 
 @Composable
 fun AndroidHomeScreen(
-    onNavigate: (NavKey) -> Unit,
-    modifier: Modifier = Modifier
+    onNavigate: (NavKey) -> Unit, modifier: Modifier = Modifier
 ) {
     val contact = PortfolioRepository.contact
     val uriHandler = LocalUriHandler.current
@@ -71,23 +71,16 @@ fun AndroidHomeScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(PureBlack)
+        modifier = modifier.fillMaxSize().background(PureBlack)
             .padding(horizontal = 20.dp, vertical = 14.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(scrollState),
+            modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 20.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 20.dp)
             ) {
                 Text(
                     text = "Monday, Nov 9",
@@ -116,14 +109,9 @@ fun AndroidHomeScreen(
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(White08)
-                    .border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
-                    .clickable { onNavigate(NavKey.Projects) }
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp))
+                    .background(White08).border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
+                    .clickable { onNavigate(NavKey.Projects) }.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -139,20 +127,6 @@ fun AndroidHomeScreen(
                     fontSize = 13.sp,
                     modifier = Modifier.weight(1f)
                 )
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(PureWhite),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "K",
-                        color = PureBlack,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -165,16 +139,19 @@ fun AndroidHomeScreen(
                 LauncherAppItem("ExoPlayer", CustomIcons.Disc) { onNavigate(NavKey.ExoPlayer) },
                 LauncherAppItem("Honors", CustomIcons.Trophy) { onNavigate(NavKey.Achievements) },
                 LauncherAppItem("Dialer", CustomIcons.Phone) { onNavigate(NavKey.Contact) },
-                LauncherAppItem("GitHub", CustomIcons.GitHub) { uriHandler.openUri(contact.githubUrl) },
-                LauncherAppItem("LinkedIn", CustomIcons.LinkedIn) { uriHandler.openUri(contact.linkedinUrl) },
-                LauncherAppItem("Email", CustomIcons.Mail) { uriHandler.openUri("mailto:${contact.email}") }
-            )
+                LauncherAppItem(
+                    "GitHub", CustomIcons.GitHub
+                ) { uriHandler.openUri(contact.githubUrl) },
+                LauncherAppItem(
+                    "LinkedIn", CustomIcons.LinkedIn
+                ) { uriHandler.openUri(contact.linkedinUrl) },
+                LauncherAppItem(
+                    "Email", CustomIcons.Mail
+                ) { uriHandler.openUri("mailto:${contact.email}") })
 
             appList.chunked(4).forEach { rowApps ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     rowApps.forEach { app ->
@@ -186,8 +163,7 @@ fun AndroidHomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             MiniExoPlayerWidget(
-                onOpenFullPlayer = { onNavigate(NavKey.ExoPlayer) }
-            )
+                onOpenFullPlayer = { onNavigate(NavKey.ExoPlayer) })
 
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -195,33 +171,38 @@ fun AndroidHomeScreen(
         Spacer(modifier = Modifier.height(14.dp))
 
         Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(32.dp))
-                .background(White08)
+            modifier = Modifier.clip(RoundedCornerShape(32.dp)).background(White08)
                 .border(1.dp, BorderWhite, RoundedCornerShape(32.dp))
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DockAvatarIcon { onNavigate(NavKey.Home) }
+            DockItem(
+                icon = CustomIcons.Sparkles, label = "Home", onClick = { onNavigate(NavKey.Home) })
 
             Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(24.dp)
-                    .background(BorderWhite)
+                modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
             )
 
-            DockIconButton(icon = CustomIcons.Code, contentDescription = "Projects") { onNavigate(NavKey.Projects) }
-            DockIconButton(icon = CustomIcons.Mail, contentDescription = "Email") { uriHandler.openUri("mailto:${contact.email}") }
-            DockIconButton(icon = CustomIcons.LinkedIn, contentDescription = "LinkedIn") { uriHandler.openUri(contact.linkedinUrl) }
-            DockIconButton(icon = CustomIcons.GitHub, contentDescription = "GitHub") { uriHandler.openUri(contact.githubUrl) }
+            DockItem(
+                icon = CustomIcons.Code,
+                label = "Projects",
+                onClick = { onNavigate(NavKey.Projects) })
+            DockItem(
+                icon = CustomIcons.Mail,
+                label = "Email",
+                onClick = { uriHandler.openUri("mailto:${contact.email}") })
+            DockItem(
+                icon = CustomIcons.LinkedIn,
+                label = "LinkedIn",
+                onClick = { uriHandler.openUri(contact.linkedinUrl) })
+            DockItem(
+                icon = CustomIcons.GitHub,
+                label = "GitHub",
+                onClick = { uriHandler.openUri(contact.githubUrl) })
 
             Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(24.dp)
-                    .background(BorderWhite)
+                modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
             )
 
             DockTopButton {
@@ -234,71 +215,50 @@ fun AndroidHomeScreen(
 }
 
 @Composable
-fun DockAvatarIcon(
-    onClick: () -> Unit
+fun DockItem(
+    icon: ImageVector, label: String, isSelected: Boolean = false, onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
-    Box(
-        modifier = Modifier
-            .size(42.dp)
-            .graphicsLayer {
-                val scale = if (isHovered) 1.15f else 1f
-                scaleX = scale
-                scaleY = scale
-            }
-            .clip(CircleShape)
-            .background(White15)
-            .border(1.dp, BorderWhite, CircleShape)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = CustomIcons.Sparkles,
-            contentDescription = "Avatar",
-            tint = PureWhite,
-            modifier = Modifier.size(20.dp)
-        )
-    }
-}
+    val showText = isHovered || isSelected
 
-@Composable
-fun DockIconButton(
-    icon: ImageVector,
-    contentDescription: String,
-    onClick: () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isHovered by interactionSource.collectIsHoveredAsState()
-
-    Box(
-        modifier = Modifier
-            .size(42.dp)
-            .graphicsLayer {
-                val scale = if (isHovered) 1.15f else 1f
-                scaleX = scale
-                scaleY = scale
-            }
-            .clip(CircleShape)
-            .background(if (isHovered) White15 else Color.Transparent)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
+    Row(
+        modifier = Modifier.height(42.dp).graphicsLayer {
+            val scale = if (isHovered) 1.08f else 1f
+            scaleX = scale
+            scaleY = scale
+        }.clip(RoundedCornerShape(21.dp)).background(if (showText) White15 else Color.Transparent)
+            .border(
+                width = if (showText) 1.dp else 0.dp,
+                color = if (showText) BorderWhite else Color.Transparent,
+                shape = RoundedCornerShape(21.dp)
+            ).clickable(
+                interactionSource = interactionSource, indication = null, onClick = onClick
+            ).padding(horizontal = if (showText) 14.dp else 0.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            tint = PureWhite,
-            modifier = Modifier.size(20.dp)
-        )
+        Box(
+            modifier = Modifier.size(42.dp), contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = PureWhite,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+
+        AnimatedVisibility(visible = showText) {
+            Text(
+                text = label,
+                color = PureWhite,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1
+            )
+        }
     }
 }
 
@@ -310,21 +270,14 @@ fun DockTopButton(
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     Row(
-        modifier = Modifier
-            .height(42.dp)
-            .graphicsLayer {
-                val scale = if (isHovered) 1.10f else 1f
-                scaleX = scale
-                scaleY = scale
-            }
-            .clip(RoundedCornerShape(21.dp))
-            .background(if (isHovered) White15 else Color.Transparent)
+        modifier = Modifier.height(42.dp).graphicsLayer {
+            val scale = if (isHovered) 1.10f else 1f
+            scaleX = scale
+            scaleY = scale
+        }.clip(RoundedCornerShape(21.dp)).background(if (isHovered) White15 else Color.Transparent)
             .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            )
-            .padding(horizontal = 14.dp),
+                interactionSource = interactionSource, indication = null, onClick = onClick
+            ).padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -334,35 +287,21 @@ fun DockTopButton(
             tint = PureWhite,
             modifier = Modifier.size(16.dp)
         )
-        Text(
-            text = "Top",
-            color = PureWhite,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold
-        )
     }
 }
 
 data class LauncherAppItem(
-    val name: String,
-    val icon: ImageVector,
-    val onClick: () -> Unit
+    val name: String, val icon: ImageVector, val onClick: () -> Unit
 )
 
 @Composable
 fun AndroidAppIcon(app: LauncherAppItem) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(68.dp)
-            .clickable(onClick = app.onClick)
-            .padding(vertical = 4.dp)
+        modifier = Modifier.width(68.dp).clickable(onClick = app.onClick).padding(vertical = 4.dp)
     ) {
         Box(
-            modifier = Modifier
-                .size(54.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(White15)
+            modifier = Modifier.size(54.dp).clip(RoundedCornerShape(16.dp)).background(White15)
                 .border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
@@ -386,7 +325,6 @@ fun AndroidAppIcon(app: LauncherAppItem) {
 }
 
 
-
 @Composable
 fun MiniExoPlayerWidget(
     onOpenFullPlayer: () -> Unit
@@ -395,37 +333,33 @@ fun MiniExoPlayerWidget(
 
     val infiniteTransition = rememberInfiniteTransition(label = "MiniEqualizer")
     val bar1 by infiniteTransition.animateFloat(
-        initialValue = 0.3f, targetValue = 1f,
+        initialValue = 0.3f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(400, easing = LinearEasing), RepeatMode.Reverse),
         label = "Bar1"
     )
     val bar2 by infiniteTransition.animateFloat(
-        initialValue = 0.8f, targetValue = 0.2f,
+        initialValue = 0.8f,
+        targetValue = 0.2f,
         animationSpec = infiniteRepeatable(tween(350, easing = LinearEasing), RepeatMode.Reverse),
         label = "Bar2"
     )
     val bar3 by infiniteTransition.animateFloat(
-        initialValue = 0.4f, targetValue = 0.9f,
+        initialValue = 0.4f,
+        targetValue = 0.9f,
         animationSpec = infiniteRepeatable(tween(450, easing = LinearEasing), RepeatMode.Reverse),
         label = "Bar3"
     )
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(White08)
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(White08)
             .border(1.dp, BorderWhiteBold, RoundedCornerShape(16.dp))
-            .clickable(onClick = onOpenFullPlayer)
-            .padding(12.dp),
+            .clickable(onClick = onOpenFullPlayer).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Box(
-            modifier = Modifier
-                .size(42.dp)
-                .clip(CircleShape)
-                .background(PureWhite),
+            modifier = Modifier.size(42.dp).clip(CircleShape).background(PureWhite),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -444,9 +378,7 @@ fun MiniExoPlayerWidget(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "ShopFlow Demo • 44.1 kHz Stereo",
-                color = White70,
-                fontSize = 11.sp
+                text = "ShopFlow Demo • 44.1 kHz Stereo", color = White70, fontSize = 11.sp
             )
         }
 
@@ -463,12 +395,8 @@ fun MiniExoPlayerWidget(
         }
 
         Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(PureWhite)
-                .clickable { isPlaying = !isPlaying },
-            contentAlignment = Alignment.Center
+            modifier = Modifier.size(32.dp).clip(CircleShape).background(PureWhite)
+                .clickable { isPlaying = !isPlaying }, contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = if (isPlaying) CustomIcons.Pause else CustomIcons.Play,
@@ -485,7 +413,6 @@ fun MiniExoPlayerWidget(
 private fun AndroidHomeScreenPreview() {
     PortfolioTheme {
         AndroidHomeScreen(
-            onNavigate = {}
-        )
+            onNavigate = {})
     }
 }
