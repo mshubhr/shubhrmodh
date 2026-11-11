@@ -48,7 +48,7 @@ fun AboutScreen(
             .background(PureBlack)
     ) {
         MotionCollapsingHeader(
-            title = "Device Info",
+            title = "Dev Specs",
             subtitle = "About Shubhr Modh • Android Engineer",
             icon = CustomIcons.School,
             scrollOffset = scrollState.value,
@@ -62,52 +62,6 @@ fun AboutScreen(
                 .padding(horizontal = 20.dp, vertical = 14.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
-                colors = CardDefaults.cardColors(containerColor = White08),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(18.dp)) {
-                    Text(
-                        text = "HARDWARE & SYSTEM SPECS",
-                        color = White70,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    val specs = listOf(
-                        "Developer" to contact.name,
-                        "Specialization" to "Android & Kotlin Multiplatform",
-                        "Experience" to "2+ Years (Production Apps)",
-                        "Target SDK" to "Android 15 (SDK 35) & 16 (SDK 37)",
-                        "16 KB Alignment" to "Compliant & Profiled",
-                        "Location" to contact.location
-                    )
-
-                    specs.forEach { (label, value) ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = label, color = White70, fontSize = 12.sp)
-                            Text(
-                                text = value,
-                                color = PureWhite,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace
-                            )
-                        }
-                    }
-                }
-            }
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

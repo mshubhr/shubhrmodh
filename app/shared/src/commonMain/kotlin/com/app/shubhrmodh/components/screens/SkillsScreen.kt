@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +43,25 @@ fun SkillsScreen(
 ) {
     val categories = PortfolioRepository.skillCategories
     val scrollState = rememberScrollState()
-    var selectedFilter by remember { mutableStateOf<String?>("All") }
+    var selectedFilter by remember { mutableStateOf("All") }
+
+    val filterOptions = listOf("All", "Android", "Architecture", "Media & Cloud", "Performance")
+
+    val filteredCategories = remember(selectedFilter, categories) {
+        if (selectedFilter == "All") {
+            categories
+        } else {
+            categories.filter { cat ->
+                when (selectedFilter) {
+                    "Android" -> cat.title.contains("Android", ignoreCase = true) || cat.title.contains("Compose", ignoreCase = true)
+                    "Architecture" -> cat.title.contains("Architecture", ignoreCase = true) || cat.title.contains("KMP", ignoreCase = true)
+                    "Media & Cloud" -> cat.title.contains("Media", ignoreCase = true) || cat.title.contains("Cloud", ignoreCase = true)
+                    "Performance" -> cat.title.contains("Performance", ignoreCase = true) || cat.title.contains("Tools", ignoreCase = true)
+                    else -> true
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -66,11 +83,12 @@ fun SkillsScreen(
                 .padding(horizontal = 20.dp, vertical = 14.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("All", "Android", "Architecture", "Cloud", "Testing").forEach { filter ->
+                filterOptions.forEach { filter ->
                     val isSelected = selectedFilter == filter
                     Text(
                         text = filter,
@@ -89,7 +107,7 @@ fun SkillsScreen(
                 }
             }
 
-            categories.forEach { category ->
+            filteredCategories.forEach { category ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

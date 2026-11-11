@@ -53,8 +53,8 @@ data class EducationItem(
 object PortfolioRepository {
     val contact = ContactInfo(
         name = "Shubhr Modh",
-        title = "Android Developer",
-        headline = "Crafting high-performance Android & Kotlin Multiplatform experiences",
+        title = "Android Developer & KMP Specialist",
+        headline = "Crafting high-performance Android, Navigation 3 & Kotlin Multiplatform experiences",
         email = "modhshubhr53@gmail.com",
         phone = "+91 8734854335",
         location = "Surat, Gujarat, India",
@@ -64,7 +64,7 @@ object PortfolioRepository {
         gitlabUrl = "https://gitlab.com/mshubhr",
         mediumUrl = "https://medium.com/@mshubhr",
         twitterUrl = "https://x.com/ShubhrM",
-        summary = "Android Developer with 2+ years of experience building Android applications using Kotlin, Jetpack Compose, Java, and REST APIs. Experienced in developing and publishing Android applications on the Google Play Store. Passionate about building reliable, scalable applications with a focus on performance, clean architecture, and excellent user experience."
+        summary = "Android Developer with 2+ years of hands-on experience building production Android applications using Kotlin, Jetpack Compose, Navigation 3, ExoPlayer Media3, and REST APIs. Experienced in publishing Android apps on Google Play Store with 16KB page-size alignment and SDK 35/37 target compatibility. Passionate about Clean Architecture, MVVM, and high-performance cross-platform KMP engines."
     )
 
     val education = EducationItem(
@@ -82,44 +82,46 @@ object PortfolioRepository {
             period = "Sep '26 – Present",
             location = "Surat, Gujarat",
             bullets = listOf(
-                "Developed a production Android application from scratch using Kotlin and MVVM architecture.",
-                "Implemented sticky notifications with customized compact & expanded layouts to improve notification presentation.",
-                "Developed reusable XML-based UI components, including gradient progress bars, MotionLayout animations, and iOS-inspired bottom navigation with smooth transitions.",
-                "Implemented Android system-level features for a utility application, including overlay and alarm permissions, full-screen intents, Wake Locks, and runtime permissions.",
-                "Used Git and GitLab for version control and actively participated in code reviews and team collaboration."
+                "Developed production Android apps from scratch using Kotlin, Jetpack Compose, Navigation 3, and MVVM architecture.",
+                "Implemented sticky notifications with customized compact & expanded layouts to improve notification delivery.",
+                "Built reusable UI components, including MotionLayout collapsing headers, gradient progress indicators, and custom scene transitions.",
+                "Implemented Android system-level APIs: overlay permissions, full-screen intents, Wake Locks, and runtime permissions.",
+                "Utilized Git and GitLab for version control, code reviews, and continuous team collaboration."
             ),
             tags = listOf(
                 "Kotlin",
+                "Jetpack Compose",
+                "Navigation 3",
                 "MVVM",
                 "Sticky Notifications",
                 "MotionLayout",
-                "System Features",
+                "System Permissions",
                 "GitLab"
             )
-        ), ExperienceItem(
+        ),
+        ExperienceItem(
             company = "Differenz System Pvt Ltd",
             role = "Junior Software Engineer",
             period = "July '24 – Aug '26",
             location = "Surat, Gujarat",
             bullets = listOf(
-                "Worked on Agilis, a dating application featuring match-based chat and real-time calling.",
-                "Implemented Firebase Cloud Messaging (FCM) notifications and real-time audio/video calling using Agora SDK.",
-                "Integrated AWS Rekognition for secure user profile verification and biometric safeguards.",
-                "Improved application startup time by 20% and reduced production crash rates by 30%.",
-                "Integrated Google Maps, Places, and Directions APIs to enable robust location-based functionality.",
-                "Resolved Android SDK 35 compatibility issues, including 16 KB page-size compatibility, R8-related warnings, and deprecated APIs.",
-                "Resolved critical issues across 5+ Android applications involving Room Database, ExoPlayer, WebView integrations (YouTube, MS Word), and third-party SDKs."
+                "Worked on Agilis, a dating application featuring match-based chat and real-time audio/video calling with Agora SDK.",
+                "Implemented Firebase Cloud Messaging (FCM) notifications and AWS Rekognition biometric profile verification.",
+                "Improved app startup performance by 20% and reduced production crash rates by 30% via R8 rules and profiling.",
+                "Integrated Google Maps, Places, and Directions APIs for location-based search and routing.",
+                "Resolved Android SDK 35/37 compatibility issues, including 16 KB page-size alignment, R8 warnings, and deprecated APIs.",
+                "Fixed critical issues across 5+ production Android apps involving Room Database, ExoPlayer Media3, and WebViews."
             ),
             tags = listOf(
                 "Kotlin",
-                "Agora SDK",
+                "Agora RTC",
                 "FCM",
                 "AWS Rekognition",
                 "Google Maps",
-                "SDK 35",
-                "16KB Page-Size",
+                "SDK 35 / 37",
+                "16KB Page Alignment",
                 "Room",
-                "ExoPlayer"
+                "ExoPlayer Media3"
             )
         )
     )
@@ -128,7 +130,7 @@ object PortfolioRepository {
         AchievementItem(
             title = "Grand Finale Winner",
             project = "Parivartan — NFT Marketplace for Cultural Artifacts",
-            description = "Won the grand finale of Azadi ka Amrit Mahotsav Hackathon 2022. Selected among 2000+ teams across Gujarat and funded under the SSIP 2.0 (Student Startup and Innovation Policy) by the Government of Gujarat.",
+            description = "Won the grand finale of Azadi ka Amrit Mahotsav Hackathon 2022 out of 2000+ teams across Gujarat. Funded under SSIP 2.0 (Student Startup and Innovation Policy) by the Government of Gujarat.",
             tag = "SSIP 2.0 Funded"
         )
     )
@@ -139,22 +141,23 @@ object PortfolioRepository {
             date = "Nov 2026",
             subtitle = "Modern E-Commerce Mobile App",
             bullets = listOf(
-                "Developed a Kotlin-based e-commerce app using Jetpack Compose, MVVM, Navigation 3, and Material 3.",
-                "Built a custom REST API using Ktor and integrated it with the Android app using Kotlin Coroutines and Flow.",
-                "Implemented offline-first product catalog and persistent shopping cart using Room, sorting, and pagination."
+                "Developed an e-commerce Android application using Jetpack Compose, Navigation 3, Material 3, and MVVM.",
+                "Built a custom REST backend service using Ktor and integrated it with asynchronous Kotlin Coroutines & Flow.",
+                "Implemented offline-first product catalog and persistent shopping cart using Room DB, sorting, and pagination."
             ),
             tags = listOf(
                 "Kotlin", "Jetpack Compose", "Navigation 3", "Material 3", "Ktor", "Room", "Flow"
             ),
             githubUrl = "https://github.com/mshubhr"
-        ), ProjectItem(
+        ),
+        ProjectItem(
             name = "FieldSync",
             date = "Mar 2026",
             subtitle = "Cross-Platform Networking & Sync Engine",
             bullets = listOf(
-                "Developed a cross-platform application using Kotlin Multiplatform (KMP) with a shared networking layer and business logic synchronization using Ktor.",
-                "Achieved over 85% code reuse across Android and iOS platforms.",
-                "Implemented RESTful backend services for OTP authentication (Twilio/Firebase), offline-first caching, and device registration, ensuring secure, scalable communication."
+                "Built a cross-platform mobile application using Kotlin Multiplatform (KMP) with a shared networking layer and Ktor sync engine.",
+                "Achieved 85%+ code reuse across Android and iOS platforms.",
+                "Implemented backend services for OTP authentication (Twilio/Firebase), offline caching, and device registration."
             ),
             tags = listOf(
                 "Kotlin Multiplatform",
@@ -165,76 +168,73 @@ object PortfolioRepository {
                 "Firebase"
             ),
             githubUrl = "https://github.com/mshubhr/FieldSync"
-        ), ProjectItem(
+        ),
+        ProjectItem(
             name = "Clink",
             date = "Jan 2026",
             subtitle = "High-Throughput Mobile App with FastAPI",
             bullets = listOf(
                 "Designed the Flutter UI in Dart and initially integrated APIs using Flask.",
-                "Migrated the backend architecture to FastAPI for superior performance, concurrency, and scalability."
+                "Migrated backend services to FastAPI for high-throughput concurrency, async processing, and scalability."
             ),
             tags = listOf("Flutter", "Dart", "Python", "FastAPI", "REST APIs"),
-            githubUrl = "https://github.com/mshubhr"
-        ), ProjectItem(
-            name = "Parivartan",
-            date = "Hackathon Winner",
-            subtitle = "Cultural Artifacts NFT Marketplace",
-            bullets = listOf(
-                "Grand finale winner in Azadi ka Amrit Mahotsav Hackathon among 2000+ teams.",
-                "Funded under Gujarat Government Student Startup and Innovation Policy (SSIP 2.0)."
-            ),
-            tags = listOf("Android", "Web3", "Cultural Preservation", "SSIP 2.0"),
             githubUrl = "https://github.com/mshubhr"
         )
     )
 
     val skillCategories = listOf(
         SkillCategory(
-            title = "Android & Mobile", skills = listOf(
+            title = "Modern Android & Jetpack Compose",
+            skills = listOf(
                 "Kotlin",
                 "Java",
-                "Android SDK",
-                "Jetpack Compose",
-                "XML Layouts",
-                "MVVM",
-                "ViewModel",
-                "LiveData",
+                "Android SDK 35/37",
+                "Jetpack Compose M3",
+                "Navigation 3",
+                "MotionLayout",
+                "MVVM & MVI",
                 "Room Database",
                 "WorkManager",
                 "Hilt / DI",
                 "Flutter & Dart"
             )
-        ), SkillCategory(
-            title = "Architecture & Reactive", skills = listOf(
+        ),
+        SkillCategory(
+            title = "Architecture & Kotlin Multiplatform",
+            skills = listOf(
                 "Clean Architecture",
                 "Kotlin Multiplatform (KMP)",
                 "Compose Multiplatform",
                 "Coroutines & Flow",
-                "Retrofit",
                 "Ktor Client/Server",
+                "Retrofit",
                 "RESTful APIs",
-                "Dependency Injection",
-                "Offline-First Design"
+                "Offline-First Storage"
             )
-        ), SkillCategory(
-            title = "SDKs & Cloud Services", skills = listOf(
+        ),
+        SkillCategory(
+            title = "Media, AI & Cloud Services",
+            skills = listOf(
+                "ExoPlayer Media3",
+                "LiteRT & GenAI Agent",
+                "AppFunctions API",
                 "Agora RTC SDK",
                 "Firebase (FCM, Auth, DB)",
                 "AWS Rekognition",
-                "Google Maps & Places",
-                "ExoPlayer / Media3",
-                "MotionLayout"
+                "Google Maps & Places"
             )
-        ), SkillCategory(
-            title = "Testing, Performance & Tools", skills = listOf(
-                "JUnit & Espresso",
+        ),
+        SkillCategory(
+            title = "Performance, 16KB Page & Tools",
+            skills = listOf(
                 "16 KB Page-Size Migration",
-                "Android SDK 35 Compatibility",
-                "R8 / ProGuard Optimization",
+                "Android SDK 35/37 Target",
+                "R8 / ProGuard Keep Rules",
+                "Perfetto & Profiling",
+                "JUnit & Espresso",
                 "Git & GitLab",
                 "Gradle Kotlin DSL",
-                "Python & FastAPI",
-                "Go"
+                "Python & FastAPI"
             )
         )
     )

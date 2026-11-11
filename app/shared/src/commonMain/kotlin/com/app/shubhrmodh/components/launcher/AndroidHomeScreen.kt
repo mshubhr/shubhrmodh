@@ -1,12 +1,6 @@
 package com.app.shubhrmodh.components.launcher
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,11 +42,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.components.CustomIcons
+import com.app.shubhrmodh.components.media.ZoroExoPlayerWidget
 import com.app.shubhrmodh.data.PortfolioRepository
 import kotlinx.coroutines.launch
 import com.app.shubhrmodh.navigation.NavKey
 import com.app.shubhrmodh.theme.BorderWhite
-import com.app.shubhrmodh.theme.BorderWhiteBold
 import com.app.shubhrmodh.theme.PortfolioTheme
 import com.app.shubhrmodh.theme.PureBlack
 import com.app.shubhrmodh.theme.PureWhite
@@ -82,19 +76,12 @@ fun AndroidHomeScreen(
             Column(
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 20.dp)
             ) {
-                Text(
-                    text = "Monday, Nov 9",
-                    color = White70,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.height(2.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "${contact.name} • ${contact.title}",
+                        text = contact.name,
                         color = PureWhite,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -102,7 +89,7 @@ fun AndroidHomeScreen(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Surat, Gujarat • 2+ Yrs Exp • Android SDK 35 & 16KB Page-Size",
+                    text = "2+ Yrs Exp • ${contact.title}",
                     color = White50,
                     fontSize = 11.sp
                 )
@@ -162,8 +149,8 @@ fun AndroidHomeScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            MiniExoPlayerWidget(
-                onOpenFullPlayer = { onNavigate(NavKey.ExoPlayer) })
+            ZoroExoPlayerWidget(
+                onOpenPlayer = { onNavigate(NavKey.ExoPlayer) })
 
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -324,89 +311,6 @@ fun AndroidAppIcon(app: LauncherAppItem) {
     }
 }
 
-
-@Composable
-fun MiniExoPlayerWidget(
-    onOpenFullPlayer: () -> Unit
-) {
-    var isPlaying by remember { mutableStateOf(true) }
-
-    val infiniteTransition = rememberInfiniteTransition(label = "MiniEqualizer")
-    val bar1 by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(400, easing = LinearEasing), RepeatMode.Reverse),
-        label = "Bar1"
-    )
-    val bar2 by infiniteTransition.animateFloat(
-        initialValue = 0.8f,
-        targetValue = 0.2f,
-        animationSpec = infiniteRepeatable(tween(350, easing = LinearEasing), RepeatMode.Reverse),
-        label = "Bar2"
-    )
-    val bar3 by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 0.9f,
-        animationSpec = infiniteRepeatable(tween(450, easing = LinearEasing), RepeatMode.Reverse),
-        label = "Bar3"
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(White08)
-            .border(1.dp, BorderWhiteBold, RoundedCornerShape(16.dp))
-            .clickable(onClick = onOpenFullPlayer).padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Box(
-            modifier = Modifier.size(42.dp).clip(CircleShape).background(PureWhite),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = CustomIcons.Disc,
-                contentDescription = null,
-                tint = PureBlack,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = "ExoPlayer Media3 Engine",
-                color = PureWhite,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "ShopFlow Demo • 44.1 kHz Stereo", color = White70, fontSize = 11.sp
-            )
-        }
-
-        if (isPlaying) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.height(18.dp)
-            ) {
-                Box(modifier = Modifier.width(3.dp).height((18 * bar1).dp).background(PureWhite))
-                Box(modifier = Modifier.width(3.dp).height((18 * bar2).dp).background(PureWhite))
-                Box(modifier = Modifier.width(3.dp).height((18 * bar3).dp).background(PureWhite))
-            }
-        }
-
-        Box(
-            modifier = Modifier.size(32.dp).clip(CircleShape).background(PureWhite)
-                .clickable { isPlaying = !isPlaying }, contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = if (isPlaying) CustomIcons.Pause else CustomIcons.Play,
-                contentDescription = "Play/Pause",
-                tint = PureBlack,
-                modifier = Modifier.size(16.dp)
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
