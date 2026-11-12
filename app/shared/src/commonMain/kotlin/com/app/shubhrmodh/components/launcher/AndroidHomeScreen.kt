@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,19 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,18 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.components.CustomIcons
-import com.app.shubhrmodh.components.media.ZoroExoPlayerWidget
+import com.app.shubhrmodh.components.media.ZoroBackground
 import com.app.shubhrmodh.data.PortfolioRepository
-import kotlinx.coroutines.launch
 import com.app.shubhrmodh.navigation.NavKey
 import com.app.shubhrmodh.theme.BorderWhite
 import com.app.shubhrmodh.theme.PortfolioTheme
-import com.app.shubhrmodh.theme.PureBlack
 import com.app.shubhrmodh.theme.PureWhite
 import com.app.shubhrmodh.theme.White08
 import com.app.shubhrmodh.theme.White15
 import com.app.shubhrmodh.theme.White50
-import com.app.shubhrmodh.theme.White70
+import kotlinx.coroutines.launch
 
 @Composable
 fun AndroidHomeScreen(
@@ -64,137 +59,138 @@ fun AndroidHomeScreen(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = modifier.fillMaxSize().background(PureBlack)
-            .padding(horizontal = 20.dp, vertical = 14.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
+        ZoroBackground()
+
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(scrollState),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xCC000000))
+                .padding(horizontal = 20.dp, vertical = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 20.dp)
+                modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 20.dp)
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = contact.name,
+                            color = PureWhite,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = contact.name,
-                        color = PureWhite,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        text = "2+ Yrs Exp • ${contact.title}",
+                        color = White50,
+                        fontSize = 11.sp
                     )
                 }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "2+ Yrs Exp • ${contact.title}",
-                    color = White50,
-                    fontSize = 11.sp
-                )
-            }
 
-            Row(
-                modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp))
-                    .background(White08).border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
-                    .clickable { onNavigate(NavKey.Projects) }.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Icon(
-                    imageVector = CustomIcons.Search,
-                    contentDescription = "Search",
-                    tint = PureWhite,
-                    modifier = Modifier.size(18.dp)
-                )
-                Text(
-                    text = "Search projects, skills & tech stack...",
-                    color = White50,
-                    fontSize = 13.sp,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            val appList = listOf(
-                LauncherAppItem("About", CustomIcons.School) { onNavigate(NavKey.About) },
-                LauncherAppItem("Experience", CustomIcons.Work) { onNavigate(NavKey.Experience) },
-                LauncherAppItem("Projects", CustomIcons.Code) { onNavigate(NavKey.Projects) },
-                LauncherAppItem("Skills", CustomIcons.Sparkles) { onNavigate(NavKey.Skills) },
-                LauncherAppItem("ExoPlayer", CustomIcons.Disc) { onNavigate(NavKey.ExoPlayer) },
-                LauncherAppItem("Honors", CustomIcons.Trophy) { onNavigate(NavKey.Achievements) },
-                LauncherAppItem("Dialer", CustomIcons.Phone) { onNavigate(NavKey.Contact) },
-                LauncherAppItem(
-                    "GitHub", CustomIcons.GitHub
-                ) { uriHandler.openUri(contact.githubUrl) },
-                LauncherAppItem(
-                    "LinkedIn", CustomIcons.LinkedIn
-                ) { uriHandler.openUri(contact.linkedinUrl) },
-                LauncherAppItem(
-                    "Email", CustomIcons.Mail
-                ) { uriHandler.openUri("mailto:${contact.email}") })
-
-            appList.chunked(4).forEach { rowApps ->
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                    modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp))
+                        .background(White08).border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
+                        .clickable { onNavigate(NavKey.Projects) }.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    rowApps.forEach { app ->
-                        AndroidAppIcon(app = app)
+                    Icon(
+                        imageVector = CustomIcons.Search,
+                        contentDescription = "Search",
+                        tint = PureWhite,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = "Search projects, skills & tech stack...",
+                        color = White50,
+                        fontSize = 13.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                val appList = listOf(
+                    LauncherAppItem("About", CustomIcons.School) { onNavigate(NavKey.About) },
+                    LauncherAppItem("Experience", CustomIcons.Work) { onNavigate(NavKey.Experience) },
+                    LauncherAppItem("Projects", CustomIcons.Code) { onNavigate(NavKey.Projects) },
+                    LauncherAppItem("Skills", CustomIcons.Sparkles) { onNavigate(NavKey.Skills) },
+                    LauncherAppItem("ExoPlayer", CustomIcons.Disc) { onNavigate(NavKey.ExoPlayer) },
+                    LauncherAppItem("Honors", CustomIcons.Trophy) { onNavigate(NavKey.Achievements) },
+                    LauncherAppItem("Dialer", CustomIcons.Phone) { onNavigate(NavKey.Contact) },
+                    LauncherAppItem(
+                        "GitHub", CustomIcons.GitHub
+                    ) { uriHandler.openUri(contact.githubUrl) },
+                    LauncherAppItem(
+                        "LinkedIn", CustomIcons.LinkedIn
+                    ) { uriHandler.openUri(contact.linkedinUrl) },
+                    LauncherAppItem(
+                        "Email", CustomIcons.Mail
+                    ) { uriHandler.openUri("mailto:${contact.email}") })
+
+                appList.chunked(4).forEach { rowApps ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        rowApps.forEach { app ->
+                            AndroidAppIcon(app = app)
+                        }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            ZoroExoPlayerWidget(
-                onOpenPlayer = { onNavigate(NavKey.ExoPlayer) })
+            Row(
+                modifier = Modifier.clip(RoundedCornerShape(32.dp)).background(White08)
+                    .border(1.dp, BorderWhite, RoundedCornerShape(32.dp))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DockItem(
+                    icon = CustomIcons.Sparkles, label = "Home", onClick = { onNavigate(NavKey.Home) })
 
-            Spacer(modifier = Modifier.height(20.dp))
-        }
+                Box(
+                    modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
+                )
 
-        Spacer(modifier = Modifier.height(14.dp))
+                DockItem(
+                    icon = CustomIcons.Code,
+                    label = "Projects",
+                    onClick = { onNavigate(NavKey.Projects) })
+                DockItem(
+                    icon = CustomIcons.Mail,
+                    label = "Email",
+                    onClick = { uriHandler.openUri("mailto:${contact.email}") })
+                DockItem(
+                    icon = CustomIcons.LinkedIn,
+                    label = "LinkedIn",
+                    onClick = { uriHandler.openUri(contact.linkedinUrl) })
+                DockItem(
+                    icon = CustomIcons.GitHub,
+                    label = "GitHub",
+                    onClick = { uriHandler.openUri(contact.githubUrl) })
 
-        Row(
-            modifier = Modifier.clip(RoundedCornerShape(32.dp)).background(White08)
-                .border(1.dp, BorderWhite, RoundedCornerShape(32.dp))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            DockItem(
-                icon = CustomIcons.Sparkles, label = "Home", onClick = { onNavigate(NavKey.Home) })
+                Box(
+                    modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
+                )
 
-            Box(
-                modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
-            )
-
-            DockItem(
-                icon = CustomIcons.Code,
-                label = "Projects",
-                onClick = { onNavigate(NavKey.Projects) })
-            DockItem(
-                icon = CustomIcons.Mail,
-                label = "Email",
-                onClick = { uriHandler.openUri("mailto:${contact.email}") })
-            DockItem(
-                icon = CustomIcons.LinkedIn,
-                label = "LinkedIn",
-                onClick = { uriHandler.openUri(contact.linkedinUrl) })
-            DockItem(
-                icon = CustomIcons.GitHub,
-                label = "GitHub",
-                onClick = { uriHandler.openUri(contact.githubUrl) })
-
-            Box(
-                modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
-            )
-
-            DockTopButton {
-                coroutineScope.launch {
-                    scrollState.animateScrollTo(0)
+                DockTopButton {
+                    coroutineScope.launch {
+                        scrollState.animateScrollTo(0)
+                    }
                 }
             }
         }
@@ -274,6 +270,12 @@ fun DockTopButton(
             tint = PureWhite,
             modifier = Modifier.size(16.dp)
         )
+        Text(
+            text = "Top",
+            color = PureWhite,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 
@@ -310,7 +312,6 @@ fun AndroidAppIcon(app: LauncherAppItem) {
         )
     }
 }
-
 
 @Preview
 @Composable

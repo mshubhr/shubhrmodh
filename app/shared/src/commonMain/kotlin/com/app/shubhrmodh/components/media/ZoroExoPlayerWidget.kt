@@ -8,355 +8,242 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.app.shubhrmodh.theme.PortfolioTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-private val ZoroGreen       = Color(0xFF39FF14)
+// ── Palette ──────────────────────────────────────────────────────────────────
+internal val ZoroGreen      = Color(0xFF39FF14)
 private val ZoroGreenDim    = Color(0xFF1A7A0A)
-private val ZoroGreenGlow   = Color(0x6039FF14)
+internal val ZoroGreenGlow  = Color(0x6039FF14)
+private val ZoroBorder      = Color(0x5039FF14)
 private val ZoroDark        = Color(0xFF050F05)
 private val ZoroDarkSurface = Color(0xFF0A180A)
-private val ZoroBorder      = Color(0x5039FF14)
 
 private fun degreesToRadians(deg: Double): Double = deg * PI / 180.0
 
+/**
+ * Full-screen background canvas with slow-drifting Zoro green energy.
+ *
+ * Layers (all move very slowly, nothing flashy):
+ *  1. Near-black green-tinted base gradient that shifts position gently
+ *  2. Two large breathing radial orbs drifting at different speeds
+ *  3. Three wide, slow diagonal energy wisps that cross the whole screen
+ *  4. A faint spinning ring of dashes at the orb centre
+ *  5. Very subtle 三刀流 silhouette near the bottom-right
+ *
+ * Drop this as the FIRST child of a Box that fills the whole screen.
+ * Everything above it will render on top.
+ */
 @Composable
-fun ZoroExoPlayerWidget(
-    onOpenPlayer: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val infinite = rememberInfiniteTransition(label = "ZoroEffect")
+fun ZoroBackground(modifier: Modifier = Modifier) {
+    val inf = rememberInfiniteTransition(label = "ZoroBg")
 
-    val orbPulse by infinite.animateFloat(
-        initialValue = 0.6f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            tween(1800, easing = FastOutSlowInEasing), RepeatMode.Reverse
-        ), label = "OrbPulse"
+    // ── Orb 1: main pulsing core (slow, 4 s) ─────────────────────────────────
+    val orb1Pulse by inf.animateFloat(
+        initialValue = 0.55f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(4000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "Orb1"
     )
-
-    val slash1 by infinite.animateFloat(
-        initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            tween(1400, easing = LinearEasing), RepeatMode.Restart
-        ), label = "Slash1"
+    // ── Orb 2: secondary drift (offset phase, 6 s) ───────────────────────────
+    val orb2Pulse by inf.animateFloat(
+        initialValue = 1f, targetValue = 0.5f,
+        animationSpec = infiniteRepeatable(tween(6000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "Orb2"
     )
-    val slash2 by infinite.animateFloat(
-        initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            tween(1900, easing = LinearEasing, delayMillis = 400), RepeatMode.Restart
-        ), label = "Slash2"
+    // ── Slow base-gradient shift (12 s, horizontal drift) ────────────────────
+    val bgShift by inf.animateFloat(
+        initialValue = 0.3f, targetValue = 0.75f,
+        animationSpec = infiniteRepeatable(tween(12000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "BgShift"
     )
-    val slash3 by infinite.animateFloat(
-        initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            tween(2300, easing = LinearEasing, delayMillis = 800), RepeatMode.Restart
-        ), label = "Slash3"
-    )
-
-    val ringRotation by infinite.animateFloat(
+    // ── Spinning ring (very slow, 18 s full rotation) ────────────────────────
+    val ringRot by inf.animateFloat(
         initialValue = 0f, targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            tween(6000, easing = LinearEasing), RepeatMode.Restart
-        ), label = "Ring"
+        animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Restart),
+        label = "Ring"
+    )
+    // ── Three wisp sweeps — very slow, wide, diagonal ────────────────────────
+    val wisp1 by inf.animateFloat(
+        initialValue = 0f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(7000, easing = LinearEasing), RepeatMode.Restart),
+        label = "W1"
+    )
+    val wisp2 by inf.animateFloat(
+        initialValue = 0f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(9500, easing = LinearEasing, delayMillis = 2000), RepeatMode.Restart),
+        label = "W2"
+    )
+    val wisp3 by inf.animateFloat(
+        initialValue = 0f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(11000, easing = LinearEasing, delayMillis = 4500), RepeatMode.Restart),
+        label = "W3"
+    )
+    // ── Silhouette alpha breathe ──────────────────────────────────────────────
+    val siloAlpha by inf.animateFloat(
+        initialValue = 0.08f, targetValue = 0.22f,
+        animationSpec = infiniteRepeatable(tween(5000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "SiloAlpha"
     )
 
-    val eq1 by infinite.animateFloat(
-        initialValue = 0.3f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(380, easing = LinearEasing), RepeatMode.Reverse),
-        label = "EQ1"
-    )
-    val eq2 by infinite.animateFloat(
-        initialValue = 0.9f, targetValue = 0.2f,
-        animationSpec = infiniteRepeatable(tween(290, easing = LinearEasing), RepeatMode.Reverse),
-        label = "EQ2"
-    )
-    val eq3 by infinite.animateFloat(
-        initialValue = 0.5f, targetValue = 0.95f,
-        animationSpec = infiniteRepeatable(tween(440, easing = LinearEasing), RepeatMode.Reverse),
-        label = "EQ3"
-    )
-    val eq4 by infinite.animateFloat(
-        initialValue = 0.7f, targetValue = 0.25f,
-        animationSpec = infiniteRepeatable(tween(330, easing = LinearEasing), RepeatMode.Reverse),
-        label = "EQ4"
-    )
-    val eq5 by infinite.animateFloat(
-        initialValue = 0.4f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(500, easing = LinearEasing), RepeatMode.Reverse),
-        label = "EQ5"
-    )
-    val eqBars = listOf(eq1, eq2, eq3, eq4, eq5)
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val w = size.width
+        val h = size.height
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(148.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(ZoroDark)
-            .border(1.dp, ZoroBorder, RoundedCornerShape(20.dp))
-            .clickable(onClick = onOpenPlayer)
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val w = size.width
-            val h = size.height
-
-            drawRect(
-                brush = Brush.radialGradient(
-                    colors = listOf(ZoroDarkSurface, ZoroDark),
-                    center = Offset(w * 0.72f, h * 0.5f),
-                    radius = w * 0.6f
-                )
+        // 1. Base gradient (slow horizontal drift)
+        drawRect(
+            brush = Brush.radialGradient(
+                colors = listOf(ZoroDarkSurface, ZoroDark, Color.Black),
+                center = Offset(w * bgShift, h * 0.4f),
+                radius = w * 0.9f
             )
+        )
 
-            val orbCx = w * 0.75f
-            val orbCy = h * 0.5f
-            val orbRadius = h * 0.6f * orbPulse
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(ZoroGreenGlow, Color.Transparent),
-                    center = Offset(orbCx, orbCy),
-                    radius = orbRadius
-                ),
-                center = Offset(orbCx, orbCy),
-                radius = orbRadius
-            )
+        // 2. Orb 1 — lower-right, main core
+        val o1x = w * 0.78f
+        val o1y = h * 0.65f
+        val o1r = h * 0.55f * orb1Pulse
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(ZoroGreenGlow, Color.Transparent),
+                center = Offset(o1x, o1y),
+                radius = o1r
+            ),
+            center = Offset(o1x, o1y),
+            radius = o1r
+        )
 
-            rotate(ringRotation, pivot = Offset(orbCx, orbCy)) {
-                for (i in 0 until 12) {
-                    val a1 = degreesToRadians((i * 30).toDouble())
-                    val a2 = degreesToRadians(((i * 30) + 10).toDouble())
-                    val r  = h * 0.38f
-                    drawLine(
-                        color = ZoroGreenDim,
-                        start = Offset(orbCx + (r * cos(a1)).toFloat(), orbCy + (r * sin(a1)).toFloat()),
-                        end   = Offset(orbCx + (r * cos(a2)).toFloat(), orbCy + (r * sin(a2)).toFloat()),
-                        strokeWidth = 1.5f,
-                        cap = StrokeCap.Round
-                    )
-                }
-            }
+        // 3. Orb 2 — upper-left, secondary ambient
+        val o2x = w * 0.18f
+        val o2y = h * 0.22f
+        val o2r = h * 0.35f * orb2Pulse
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(ZoroGreenDim.copy(alpha = 0.35f), Color.Transparent),
+                center = Offset(o2x, o2y),
+                radius = o2r
+            ),
+            center = Offset(o2x, o2y),
+            radius = o2r
+        )
 
-            drawSwordSlash(w, h, t = slash1, yFraction = 0.30f, angleDeg = -28f, alpha = 0.90f)
-            drawSwordSlash(w, h, t = slash2, yFraction = 0.52f, angleDeg = -22f, alpha = 0.75f)
-            drawSwordSlash(w, h, t = slash3, yFraction = 0.72f, angleDeg = -32f, alpha = 0.55f)
-
-            drawSantoryuSilhouette(orbCx, orbCy, h)
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 18.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(ZoroGreenGlow)
-                        .border(1.dp, ZoroBorder, RoundedCornerShape(4.dp))
-                        .padding(horizontal = 7.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = "EXOPLAYER  •  MEDIA3",
-                        color = ZoroGreen,
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 1.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "三刀流 Engine",
-                    color = Color.White,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Santōryū · Cursed Blade Arc",
-                    color = ZoroGreen.copy(alpha = 0.7f),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(3.dp),
-                    verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier.height(16.dp)
-                ) {
-                    eqBars.forEach { v ->
-                        Box(
-                            modifier = Modifier
-                                .width(3.dp)
-                                .height((16 * v).dp)
-                                .clip(RoundedCornerShape(1.dp))
-                                .background(ZoroGreen)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = "MediaSource · CacheDataSource · AudioSink",
-                    color = Color.White.copy(alpha = 0.35f),
-                    fontSize = 9.sp,
-                    fontFamily = FontFamily.Monospace,
-                    letterSpacing = 0.3.sp
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.width(56.dp)
-            ) {
-                Text(
-                    text = "▶",
-                    color = ZoroGreen,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Open\nPlayer",
-                    color = ZoroGreen.copy(alpha = 0.6f),
-                    fontSize = 9.sp,
-                    fontFamily = FontFamily.Monospace,
-                    lineHeight = 12.sp
+        // 4. Faint spinning ring around orb1
+        rotate(ringRot, pivot = Offset(o1x, o1y)) {
+            for (i in 0 until 16) {
+                val a1 = degreesToRadians((i * 22.5))
+                val a2 = degreesToRadians((i * 22.5) + 7.0)
+                val r  = h * 0.28f
+                drawLine(
+                    color = ZoroGreenDim.copy(alpha = 0.4f),
+                    start = Offset(o1x + (r * cos(a1)).toFloat(), o1y + (r * sin(a1)).toFloat()),
+                    end   = Offset(o1x + (r * cos(a2)).toFloat(), o1y + (r * sin(a2)).toFloat()),
+                    strokeWidth = 1.2f,
+                    cap = StrokeCap.Round
                 )
             }
         }
+
+        // 5. Three slow wide energy wisps crossing the full screen
+        drawEnergyWisp(w, h, t = wisp1, yFrac = 0.28f, angleDeg = -18f, alpha = 0.28f, wide = true)
+        drawEnergyWisp(w, h, t = wisp2, yFrac = 0.55f, angleDeg = -12f, alpha = 0.20f, wide = true)
+        drawEnergyWisp(w, h, t = wisp3, yFrac = 0.78f, angleDeg = -22f, alpha = 0.15f, wide = true)
+
+        // 6. 三刀流 silhouette — very faint, bottom-right quadrant
+        drawSantoryuSilhouette(o1x, o1y, h, alpha = siloAlpha)
     }
 }
 
-private fun DrawScope.drawSwordSlash(
+// ── DrawScope helpers ────────────────────────────────────────────────────────
+
+/**
+ * Wide, slow energy wisp that drifts diagonally across the whole screen.
+ * Unlike the old "slash" these are thick, low-alpha, wide gradient strokes —
+ * more like a moving aurora band than a sword strike.
+ */
+private fun DrawScope.drawEnergyWisp(
     w: Float,
     h: Float,
     t: Float,
-    yFraction: Float,
+    yFrac: Float,
     angleDeg: Float,
     alpha: Float,
+    wide: Boolean = false,
 ) {
-    val slashLen = w * 0.45f
-    val trail    = w * 0.30f
+    val len   = w * 0.65f
+    val trail = w * 0.55f
+    val thick = if (wide) 18f else 6f
 
-    val tipX  = -slashLen + t * (w + slashLen * 2f)
-    val baseY = h * yFraction
+    val tipX  = -len + t * (w + len * 2f)
+    val baseY = h * yFrac
     val rad   = degreesToRadians(angleDeg.toDouble())
     val cosA  = cos(rad).toFloat()
     val sinA  = sin(rad).toFloat()
 
-    val tipEnd   = Offset(tipX, baseY)
-    val tipStart = Offset(tipX - slashLen * cosA, baseY - slashLen * sinA)
-    val trailEnd = Offset(tipX - (slashLen + trail) * cosA, baseY - (slashLen + trail) * sinA)
+    val tipEnd    = Offset(tipX, baseY)
+    val tipStart  = Offset(tipX - len * cosA, baseY - len * sinA)
+    val trailEnd  = Offset(tipX - (len + trail) * cosA, baseY - (len + trail) * sinA)
 
+    // Long fading tail
     drawLine(
         brush = Brush.linearGradient(
-            colors = listOf(Color.Transparent, ZoroGreen.copy(alpha = alpha * 0.8f)),
+            colors = listOf(Color.Transparent, ZoroGreen.copy(alpha = alpha * 0.6f)),
             start = trailEnd, end = tipStart
         ),
         start = trailEnd, end = tipStart,
-        strokeWidth = 2.5f, cap = StrokeCap.Round
+        strokeWidth = thick, cap = StrokeCap.Round
     )
-
+    // Brighter leading portion
     drawLine(
         brush = Brush.linearGradient(
-            colors = listOf(ZoroGreen.copy(alpha = alpha), Color.White.copy(alpha = alpha * 0.6f)),
+            colors = listOf(ZoroGreen.copy(alpha = alpha), ZoroGreen.copy(alpha = alpha * 0.3f)),
             start = tipStart, end = tipEnd
         ),
         start = tipStart, end = tipEnd,
-        strokeWidth = 3.5f, cap = StrokeCap.Round
+        strokeWidth = thick * 0.6f, cap = StrokeCap.Round
     )
-
-    drawCircle(color = ZoroGreen.copy(alpha = alpha * 0.9f), center = tipEnd, radius = 3.5f)
-    drawCircle(color = Color.White.copy(alpha = alpha * 0.5f), center = tipEnd, radius = 1.5f)
 }
 
-private fun DrawScope.drawSantoryuSilhouette(cx: Float, cy: Float, h: Float) {
+/** Faint 三刀流 silhouette — three blade lines + tsubas */
+private fun DrawScope.drawSantoryuSilhouette(
+    cx: Float, cy: Float, h: Float, alpha: Float
+) {
     val swords = listOf(
-        Triple(-10f, -h * 0.38f, -55.0),
-        Triple(0f,   -h * 0.42f,   0.0),
-        Triple(10f,  -h * 0.38f,  55.0),
+        Triple(-14f, -h * 0.40f, -55.0),
+        Triple(0f,   -h * 0.44f,   0.0),
+        Triple(14f,  -h * 0.40f,  55.0),
     )
-
     swords.forEach { (dx, bladeLen, angleDeg) ->
         val rad    = degreesToRadians(angleDeg)
-        val startX = cx + dx
-        val startY = cy + h * 0.12f
-        val endX   = startX + (bladeLen * sin(rad)).toFloat()
-        val endY   = startY + (bladeLen * cos(rad)).toFloat()
+        val sx     = cx + dx
+        val sy     = cy + h * 0.10f
+        val ex     = sx + (bladeLen * sin(rad)).toFloat()
+        val ey     = sy + (bladeLen * cos(rad)).toFloat()
 
         drawLine(
-            color = ZoroGreen.copy(alpha = 0.55f),
-            start = Offset(startX, startY),
-            end   = Offset(endX, endY),
-            strokeWidth = 2f,
-            cap = StrokeCap.Round
+            color = ZoroGreen.copy(alpha = alpha),
+            start = Offset(sx, sy), end = Offset(ex, ey),
+            strokeWidth = 2.5f, cap = StrokeCap.Round
         )
 
-        val perpRad   = rad + PI / 2.0
-        val guardCx   = startX + (bladeLen * 0.08f * sin(rad)).toFloat()
-        val guardCy   = startY + (bladeLen * 0.08f * cos(rad)).toFloat()
-        val guardHalf = h * 0.045f
+        val perp      = rad + PI / 2.0
+        val gx        = sx + (bladeLen * 0.08f * sin(rad)).toFloat()
+        val gy        = sy + (bladeLen * 0.08f * cos(rad)).toFloat()
+        val guardHalf = h * 0.04f
         drawLine(
-            color = ZoroGreenDim.copy(alpha = 0.8f),
-            start = Offset(guardCx - (guardHalf * cos(perpRad)).toFloat(), guardCy - (guardHalf * sin(perpRad)).toFloat()),
-            end   = Offset(guardCx + (guardHalf * cos(perpRad)).toFloat(), guardCy + (guardHalf * sin(perpRad)).toFloat()),
-            strokeWidth = 2.5f,
-            cap = StrokeCap.Round
+            color = ZoroGreenDim.copy(alpha = alpha * 0.9f),
+            start = Offset(gx - (guardHalf * cos(perp)).toFloat(), gy - (guardHalf * sin(perp)).toFloat()),
+            end   = Offset(gx + (guardHalf * cos(perp)).toFloat(), gy + (guardHalf * sin(perp)).toFloat()),
+            strokeWidth = 2.5f, cap = StrokeCap.Round
         )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
-@Composable
-private fun ZoroExoPlayerWidgetPreview() {
-    PortfolioTheme(darkTheme = true) {
-        Box(modifier = Modifier.padding(16.dp)) {
-            ZoroExoPlayerWidget(onOpenPlayer = {})
-        }
     }
 }
