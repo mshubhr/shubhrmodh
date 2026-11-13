@@ -4,24 +4,44 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background: #090C0B;
+    color: #E9E8DF;
 }
 
-@media (prefers-color-scheme: light) {
-    body {
-        background-color: #FFFFFF !important;
-        color: #09090B !important;
-    }
-    #loader p {
-        color: #64748B !important;
-    }
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #000000 !important;
-        color: #FFFFFF !important;
-    }
-    #loader p {
-        color: #94A3B8 !important;
-    }
+#loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: #A9AEA7;
+    font-size: 14px;
+}
+
+#loader p {
+    margin: 0;
+}
+
+.loader-mark {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #303833;
+    border-top-color: #6F9B7E;
+    border-radius: 50%;
+    animation: turn 1.1s linear infinite;
+}
+
+@keyframes turn {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .loader-mark { animation: none; }
 }
