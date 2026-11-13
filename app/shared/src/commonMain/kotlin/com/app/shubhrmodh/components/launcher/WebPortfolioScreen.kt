@@ -2,9 +2,9 @@ package com.app.shubhrmodh.components.launcher
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,32 +30,34 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalUriHandler
-import com.app.shubhrmodh.prefersReducedMotion
 import com.app.shubhrmodh.data.PortfolioRepository
+import com.app.shubhrmodh.data.ProjectItem
+import com.app.shubhrmodh.prefersReducedMotion
 import kotlinx.coroutines.launch
 
 private val Void = Color(0xFF090C0B)
@@ -71,7 +74,9 @@ private enum class PortfolioSection(val index: Int) {
 }
 
 @Composable
-fun WebPortfolioScreen() {
+fun WebPortfolioScreen(
+    onToggleLauncherMode: (() -> Unit)? = null
+) {
     val state = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
@@ -82,46 +87,14 @@ fun WebPortfolioScreen() {
             else state.animateScrollToItem(section.index)
         }
     }
-    val projects = listOf(
-        FeaturedProject(
-            name = "FieldSync",
-            category = "KOTLIN MULTIPLATFORM  /  FIELD OPERATIONS",
-            description = "A cross-platform field operations application built around shared networking and synchronization.",
-            highlights = listOf(
-                "Shared KMP networking layer with a Ktor sync engine",
-                "85%+ code reuse across Android and iOS",
-                "OTP authentication, offline caching and device registration"
-            ),
-            stack = listOf("Kotlin Multiplatform", "Ktor", "Coroutines", "Firebase"),
-            url = PortfolioRepository.projects.first { it.name == "FieldSync" }.githubUrl,
-            number = "01"
-        ),
-        FeaturedProject(
-            name = "ShopFlow",
-            category = "ANDROID  /  COMMERCE",
-            description = "An Android shopping application with a resilient, offline-first product and cart experience.",
-            highlights = listOf(
-                "Product catalog with sorting and pagination",
-                "Persistent shopping cart backed by Room",
-                "Ktor REST backend with Coroutines and Flow"
-            ),
-            stack = listOf("Kotlin", "Jetpack Compose", "Room", "Ktor", "Flow"),
-            url = null,
-            number = "02"
-        ),
-        FeaturedProject(
-            name = "VideoApp",
-            category = "VIDEO  /  GO BACKEND",
-            description = "A video application backed by a Go service and PostgreSQL.",
-            highlights = emptyList(),
-            stack = listOf("Go", "PostgreSQL"),
-            url = null,
-            number = "03"
-        )
-    )
+    val projects = PortfolioRepository.projects
 
     Column(Modifier.fillMaxSize().background(Void)) {
-        PortfolioNav(onSelect = goTo, onHome = { goTo(PortfolioSection.Home) })
+        PortfolioNav(
+            onSelect = goTo,
+            onHome = { goTo(PortfolioSection.Home) },
+            onToggleLauncherMode = onToggleLauncherMode
+        )
         LazyColumn(
             state = state,
             modifier = Modifier.fillMaxSize(),
@@ -132,7 +105,8 @@ fun WebPortfolioScreen() {
                     scrollState = state,
                     reduceMotion = reduceMotion,
                     onProjects = { goTo(PortfolioSection.Projects) },
-                    onContact = { goTo(PortfolioSection.Contact) }
+                    onContact = { goTo(PortfolioSection.Contact) },
+                    onToggleLauncherMode = onToggleLauncherMode
                 )
             }
             item(key = "projects") { ProjectsSection(projects, reduceMotion, uriHandler::openUri) }
@@ -145,9 +119,13 @@ fun WebPortfolioScreen() {
 }
 
 @Composable
-private fun PortfolioNav(onSelect: (PortfolioSection) -> Unit, onHome: () -> Unit) {
+private fun PortfolioNav(
+    onSelect: (PortfolioSection) -> Unit,
+    onHome: () -> Unit,
+    onToggleLauncherMode: (() -> Unit)? = null
+) {
     BoxWithConstraints(Modifier.fillMaxWidth().background(Void)) {
-        val compact = maxWidth < 600.dp
+        val compact = maxWidth < 640.dp
         Row(
             Modifier.fillMaxWidth()
                 .padding(horizontal = if (compact) 18.dp else 48.dp, vertical = 17.dp),
@@ -155,14 +133,17 @@ private fun PortfolioNav(onSelect: (PortfolioSection) -> Unit, onHome: () -> Uni
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.clickable(onClick = onHome)
+                modifier = Modifier.clickable(role = Role.Button, onClick = onHome)
                     .semantics { contentDescription = "Shubhr Modh, home" },
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text("SM  /  MODH", color = Paper, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.3.sp)
-                Text("ANDROID  ·  KOTLIN", color = Soft, fontSize = 9.sp, letterSpacing = 1.1.sp)
+                Text("ANDROID  ·  KOTLIN", color = Soft, fontSize = 11.sp, letterSpacing = 1.1.sp)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(if (compact) 10.dp else 26.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(if (compact) 8.dp else 22.dp)
+            ) {
                 val links = if (compact) {
                     listOf("Work" to PortfolioSection.Projects, "About" to PortfolioSection.About, "Contact" to PortfolioSection.Contact)
                 } else {
@@ -183,9 +164,31 @@ private fun PortfolioNav(onSelect: (PortfolioSection) -> Unit, onHome: () -> Uni
                             indication = null
                         ) { onSelect(section) }.padding(vertical = 8.dp),
                         color = if (section == PortfolioSection.Contact) Emerald else Soft,
-                        fontSize = if (compact) 10.sp else 12.sp,
+                        fontSize = if (compact) 11.sp else 12.sp,
                         maxLines = 1
                     )
+                }
+
+                if (onToggleLauncherMode != null) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Forest)
+                            .border(1.dp, Emerald, RoundedCornerShape(4.dp))
+                            .clickable(role = Role.Button, onClick = onToggleLauncherMode)
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(Modifier.size(6.dp).clip(CircleShape).background(Emerald))
+                        Text(
+                            text = if (compact) "ANDROID OS" else "ANDROID OS SIMULATOR",
+                            color = Paper,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+                    }
                 }
             }
         }
@@ -196,14 +199,20 @@ private fun PortfolioNav(onSelect: (PortfolioSection) -> Unit, onHome: () -> Uni
 }
 
 @Composable
-private fun HeroSection(scrollState: LazyListState, reduceMotion: Boolean, onProjects: () -> Unit, onContact: () -> Unit) {
+private fun HeroSection(
+    scrollState: LazyListState,
+    reduceMotion: Boolean,
+    onProjects: () -> Unit,
+    onContact: () -> Unit,
+    onToggleLauncherMode: (() -> Unit)? = null
+) {
     BoxWithConstraints(Modifier.fillMaxWidth().background(Void)) {
         val narrow = maxWidth < 760.dp
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = if (maxWidth < 640.dp) 24.dp else 64.dp)
-                .height(if (narrow) 820.dp else 650.dp)
-                .padding(vertical = 42.dp),
+                .defaultMinSize(minHeight = if (narrow) 620.dp else 560.dp)
+                .padding(vertical = 36.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -218,43 +227,50 @@ private fun HeroSection(scrollState: LazyListState, reduceMotion: Boolean, onPro
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             Box(Modifier.size(7.dp).clip(CircleShape).background(Emerald))
-                            Text("ENGINEERING IN KOTLIN  ·  SURAT, INDIA", color = Emerald, fontSize = 10.sp, letterSpacing = 1.5.sp)
+                            Text("ENGINEERING IN KOTLIN  ·  SURAT, INDIA", color = Emerald, fontSize = 11.sp, letterSpacing = 1.5.sp)
                         }
-                        Spacer(Modifier.height(28.dp))
+                        Spacer(Modifier.height(24.dp))
                         Text(
                             "SHUBHR\nMODH.",
                             color = Paper,
-                            fontSize = if (narrow) 56.sp else 82.sp,
-                            lineHeight = if (narrow) 59.sp else 84.sp,
+                            fontSize = if (narrow) 52.sp else 82.sp,
+                            lineHeight = if (narrow) 56.sp else 84.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = (-2).sp
                         )
-                        Spacer(Modifier.height(19.dp))
+                        Spacer(Modifier.height(18.dp))
                         Text(
-                            "ANDROID  /  KOTLIN MULTIPLATFORM DEVELOPER",
-                            color = Soft,
-                            fontSize = if (narrow) 10.sp else 12.sp,
+                            "ANDROID & KOTLIN MULTIPLATFORM DEVELOPER",
+                            color = Emerald,
+                            fontSize = if (narrow) 12.sp else 13.sp,
+                            fontWeight = FontWeight.Bold,
                             letterSpacing = 1.4.sp
                         )
                         Spacer(Modifier.height(20.dp))
                         Text(
-                            "I build software with discipline,\nclarity, and a bias for the useful.",
+                            "Building resilient mobile applications and shared architecture with intent.",
                             color = Paper,
-                            fontSize = if (narrow) 21.sp else 27.sp,
-                            lineHeight = if (narrow) 30.sp else 36.sp,
+                            fontSize = if (narrow) 20.sp else 27.sp,
+                            lineHeight = if (narrow) 28.sp else 36.sp,
                             fontWeight = FontWeight.Medium
                         )
                         Spacer(Modifier.height(14.dp))
                         Text(
-                            "From native Android products to shared Kotlin systems, I care about the details that make an app dependable.",
+                            "Focused on Kotlin, Jetpack Compose, and Kotlin Multiplatform. I design production-grade software that balances robust engineering with calm, responsive user experiences.",
                             color = Soft,
                             fontSize = 14.sp,
                             lineHeight = 23.sp
                         )
-                        Spacer(Modifier.height(30.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            ActionLink("Explore my work", primary = true, onClick = onProjects)
-                            ActionLink("Contact me", primary = false, onClick = onContact)
+                        Spacer(Modifier.height(28.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            ActionLink("Explore work", primary = true, onClick = onProjects)
+                            ActionLink("Get in touch", primary = false, onClick = onContact)
+                            if (onToggleLauncherMode != null) {
+                                ActionLink("Android Simulator ⚡", primary = false, onClick = onToggleLauncherMode)
+                            }
                         }
                     }
                 }
@@ -267,19 +283,15 @@ private fun HeroSection(scrollState: LazyListState, reduceMotion: Boolean, onPro
                 }
             }
         }
-        if (narrow) {
-            Box(
-                Modifier.fillMaxWidth().height(165.dp).align(Alignment.BottomCenter).padding(bottom = 46.dp),
-                contentAlignment = Alignment.Center
-            ) { SwordStudy(Modifier.fillMaxSize()) }
-        }
         Row(
-            Modifier.align(Alignment.BottomStart).clickable(role = Role.Button, onClick = onProjects).padding(bottom = 14.dp),
+            Modifier.align(Alignment.BottomStart)
+                .clickable(role = Role.Button, onClick = onProjects)
+                .padding(start = if (maxWidth < 640.dp) 24.dp else 64.dp, bottom = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Box(Modifier.width(34.dp).height(1.dp).background(Emerald))
-            Text("SCROLL TO EXPLORE", color = Soft, fontSize = 9.sp, letterSpacing = 1.4.sp)
+            Text("SCROLL TO EXPLORE", color = Soft, fontSize = 11.sp, letterSpacing = 1.4.sp)
         }
     }
 }
@@ -334,7 +346,7 @@ private fun SwordStudy(modifier: Modifier = Modifier) {
             "DISCIPLINE  /  PRECISION  /  CRAFT",
             Modifier.align(Alignment.BottomEnd).padding(bottom = 15.dp),
             color = Soft.copy(alpha = .7f),
-            fontSize = 8.sp,
+            fontSize = 11.sp,
             letterSpacing = 1.5.sp
         )
     }
@@ -342,7 +354,7 @@ private fun SwordStudy(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ActionLink(label: String, primary: Boolean, onClick: () -> Unit) {
-    val shape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp)
+    val shape = RoundedCornerShape(2.dp)
     Row(
         Modifier.clip(shape)
             .background(if (primary) Forest else Color.Transparent)
@@ -357,19 +369,9 @@ private fun ActionLink(label: String, primary: Boolean, onClick: () -> Unit) {
     }
 }
 
-private data class FeaturedProject(
-    val name: String,
-    val category: String,
-    val description: String,
-    val highlights: List<String>,
-    val stack: List<String>,
-    val url: String?,
-    val number: String
-)
-
 @Composable
 private fun ProjectsSection(
-    projects: List<FeaturedProject>,
+    projects: List<ProjectItem>,
     reduceMotion: Boolean,
     openUri: (String) -> Unit
 ) {
@@ -393,7 +395,7 @@ private fun ProjectsSection(
             Modifier.clickable(role = Role.Button) { openUri(PortfolioRepository.contact.githubUrl) }
                 .padding(vertical = 8.dp),
             color = Emerald,
-            fontSize = 10.sp,
+            fontSize = 11.sp,
             letterSpacing = 1.2.sp
         )
     }
@@ -401,7 +403,7 @@ private fun ProjectsSection(
 
 @Composable
 private fun ProjectShowcase(
-    project: FeaturedProject,
+    project: ProjectItem,
     index: Int,
     reduceMotion: Boolean,
     openUri: (String) -> Unit
@@ -460,7 +462,7 @@ private fun ProjectShowcase(
             }
         }
         if (expanded && project.highlights.isNotEmpty()) {
-            androidx.compose.animation.AnimatedVisibility(
+            AnimatedVisibility(
                 visible = true,
                 enter = if (reduceMotion) EnterTransition.None else fadeIn(tween(220))
             ) {
@@ -468,14 +470,14 @@ private fun ProjectShowcase(
                     Modifier.fillMaxWidth().padding(top = 20.dp, start = 38.dp, end = 12.dp, bottom = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text("ENGINEERING CONTRIBUTIONS", color = Emerald, fontSize = 9.sp, letterSpacing = 1.4.sp)
+                    Text("ENGINEERING CONTRIBUTIONS", color = Emerald, fontSize = 11.sp, letterSpacing = 1.4.sp)
                     project.highlights.forEach { HighlightLine(it) }
-                    project.url?.let { url ->
+                    if (!project.isPrivate && project.githubUrl.isNotBlank()) {
                         Text(
                             "VIEW REPOSITORY  ↗",
-                            Modifier.clickable(role = Role.Button) { openUri(url) }.padding(vertical = 8.dp),
+                            Modifier.clickable(role = Role.Button) { openUri(project.githubUrl) }.padding(vertical = 8.dp),
                             color = Paper,
-                            fontSize = 10.sp,
+                            fontSize = 11.sp,
                             letterSpacing = 1.sp
                         )
                     }
@@ -487,7 +489,7 @@ private fun ProjectShowcase(
 
 @Composable
 private fun ProjectSummary(
-    project: FeaturedProject,
+    project: ProjectItem,
     index: Int,
     hovered: Boolean,
     interactionSource: MutableInteractionSource,
@@ -502,14 +504,16 @@ private fun ProjectSummary(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("0${index + 1}  /  ${project.category}", color = Emerald, fontSize = 9.sp, letterSpacing = 1.sp)
-            project.url?.let { url ->
+            Text("0${index + 1}  /  ${project.category}", color = Emerald, fontSize = 11.sp, letterSpacing = 1.sp)
+            if (project.isPrivate) {
+                Text("ENTERPRISE / PRIVATE", color = Soft, fontSize = 11.sp, letterSpacing = 0.8.sp)
+            } else if (project.githubUrl.isNotBlank()) {
                 Text(
                     "GITHUB ↗",
-                    Modifier.clickable(role = Role.Button) { openUri(url) }
+                    Modifier.clickable(role = Role.Button) { openUri(project.githubUrl) }
                         .padding(vertical = 6.dp),
                     color = Soft,
-                    fontSize = 9.sp
+                    fontSize = 11.sp
                 )
             }
         }
@@ -519,9 +523,9 @@ private fun ProjectSummary(
         Text(project.description, color = Soft, fontSize = 14.sp, lineHeight = 23.sp)
         Spacer(Modifier.height(16.dp))
         Text(
-            project.stack.joinToString("   /   "),
+            project.tags.joinToString("   /   "),
             color = Paper,
-            fontSize = 10.sp,
+            fontSize = 11.sp,
             lineHeight = 18.sp
         )
         if (project.highlights.isNotEmpty()) {
@@ -587,29 +591,23 @@ private fun AboutCopy(modifier: Modifier, onContact: () -> Unit) {
             "My focus is Kotlin, Jetpack Compose, and clean application architecture. Kotlin Multiplatform is where I’m taking that experience next: sharing the right foundations while keeping each platform’s experience native.",
             color = Soft, fontSize = 14.sp, lineHeight = 24.sp
         )
-        Text("LET’S TALK  →", Modifier.clickable(role = Role.Button, onClick = onContact).padding(vertical = 6.dp), color = Emerald, fontSize = 10.sp, letterSpacing = 1.3.sp)
+        Text("LET’S TALK  →", Modifier.clickable(role = Role.Button, onClick = onContact).padding(vertical = 6.dp), color = Emerald, fontSize = 11.sp, letterSpacing = 1.3.sp)
     }
 }
 
 @Composable
 private fun SkillsSection() {
-    val skills = listOf(
-        "LANGUAGES" to listOf("Kotlin", "Java"),
-        "ANDROID" to listOf("Jetpack Compose", "Android Jetpack", "Room", "Hilt"),
-        "MULTIPLATFORM" to listOf("Kotlin Multiplatform", "Coroutines", "Flow", "SQLDelight"),
-        "NETWORK & DATA" to listOf("Ktor", "Retrofit", "REST APIs"),
-        "WORKFLOW" to listOf("Git", "GitHub")
-    )
+    val categories = PortfolioRepository.skillCategories
     SectionFrame("TOOLS & TECHNIQUE", "A toolkit for shipping.", "03  /  SKILLS") {
         Column {
-            skills.forEach { (category, values) ->
+            categories.forEach { category ->
                 Row(
                     Modifier.fillMaxWidth().padding(vertical = 14.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(category, Modifier.width(138.dp), color = Emerald, fontSize = 9.sp, letterSpacing = 1.2.sp)
-                    Text(values.joinToString("     /     "), color = Paper, fontSize = 14.sp, lineHeight = 23.sp)
+                    Text(category.title.uppercase(), Modifier.width(180.dp), color = Emerald, fontSize = 11.sp, letterSpacing = 1.2.sp)
+                    Text(category.skills.joinToString("     /     "), color = Paper, fontSize = 14.sp, lineHeight = 23.sp)
                 }
                 Box(Modifier.fillMaxWidth().height(1.dp).background(Rule))
             }
@@ -628,9 +626,9 @@ private fun ExperienceSection() {
                 verticalAlignment = Alignment.Top
             ) {
                 Column(Modifier.width(116.dp)) {
-                    Text(item.period.uppercase(), color = Emerald, fontSize = 10.sp, lineHeight = 15.sp)
+                    Text(item.period.uppercase(), color = Emerald, fontSize = 11.sp, lineHeight = 15.sp)
                     Spacer(Modifier.height(5.dp))
-                    Text(item.location, color = Soft, fontSize = 11.sp)
+                    Text(item.location, color = Soft, fontSize = 12.sp)
                 }
                 Column(Modifier.weight(1f)) {
                     Text(item.role, color = Paper, fontSize = 20.sp, fontWeight = FontWeight.Medium)
@@ -644,7 +642,7 @@ private fun ExperienceSection() {
         }
         Spacer(Modifier.height(18.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.Top) {
-            Text("2020 — 2024", Modifier.width(116.dp), color = Emerald, fontSize = 10.sp)
+            Text("2020 — 2024", Modifier.width(116.dp), color = Emerald, fontSize = 11.sp)
             Column {
                 Text(data.education.institution, color = Paper, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(5.dp))
@@ -693,15 +691,15 @@ private fun ContactSection(onOpen: (String) -> Unit) {
                 Text(
                     label,
                     Modifier.clickable(role = Role.Button) { onOpen(url) }.padding(vertical = 8.dp),
-                    color = Paper, fontSize = 10.sp, letterSpacing = 1.sp
+                    color = Paper, fontSize = 11.sp, letterSpacing = 1.sp
                 )
             }
         }
         Spacer(Modifier.height(48.dp))
         Box(Modifier.fillMaxWidth().height(1.dp).background(Rule))
         Row(Modifier.fillMaxWidth().padding(top = 15.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("SHUBHR MODH  /  ANDROID · KOTLIN · KMP", color = Soft, fontSize = 9.sp, letterSpacing = .8.sp)
-            Text("SURAT, INDIA", color = Soft, fontSize = 9.sp, letterSpacing = .8.sp)
+            Text("SHUBHR MODH  /  ANDROID · KOTLIN · KMP", color = Soft, fontSize = 11.sp, letterSpacing = .8.sp)
+            Text("SURAT, INDIA", color = Soft, fontSize = 11.sp, letterSpacing = .8.sp)
         }
     }
 }
@@ -720,8 +718,8 @@ private fun SectionFrame(
                 .padding(top = if (compact) 56.dp else 76.dp, bottom = if (compact) 55.dp else 72.dp)
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(eyebrow, color = Emerald, fontSize = 9.sp, letterSpacing = 1.5.sp)
-                Text(index, color = Soft, fontSize = 9.sp, letterSpacing = 1.sp)
+                Text(eyebrow, color = Emerald, fontSize = 11.sp, letterSpacing = 1.5.sp)
+                Text(index, color = Soft, fontSize = 11.sp, letterSpacing = 1.sp)
             }
             Spacer(Modifier.height(16.dp))
             Text(

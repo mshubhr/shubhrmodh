@@ -112,7 +112,12 @@ fun ContactScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { uriHandler.openUri("tel:${dialedNumber}") },
+                    onClick = {
+                        try {
+                            uriHandler.openUri("tel:${dialedNumber.replace(" ", "")}")
+                        } catch (_: Exception) {
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = PureWhite, contentColor = PureBlack),
                     shape = RoundedCornerShape(24.dp),
                     contentPadding = PaddingValues(horizontal = 28.dp, vertical = 12.dp)

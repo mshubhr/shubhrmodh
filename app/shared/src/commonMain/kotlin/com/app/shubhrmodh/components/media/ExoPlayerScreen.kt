@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.components.CustomIcons
 import com.app.shubhrmodh.components.motion.MotionCollapsingHeader
+import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.theme.BorderWhite
 import com.app.shubhrmodh.theme.BorderWhiteBold
 import com.app.shubhrmodh.theme.PureBlack
@@ -57,46 +58,12 @@ import com.app.shubhrmodh.theme.White30
 import com.app.shubhrmodh.theme.White50
 import com.app.shubhrmodh.theme.White70
 
-data class ExoTrack(
-    val title: String,
-    val subtitle: String,
-    val durationSec: Int,
-    val techNote: String
-)
-
 @Composable
 fun ExoPlayerScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val tracks = remember {
-        listOf(
-            ExoTrack(
-                title = "ShopFlow Architecture",
-                subtitle = "Jetpack Compose • Navigation 3 • Room Flow",
-                durationSec = 214,
-                techNote = "ExoPlayer MediaSource with custom cache datasource and Room state sync"
-            ),
-            ExoTrack(
-                title = "FieldSync KMP Engine",
-                subtitle = "Kotlin Multiplatform • Ktor Shared Networking",
-                durationSec = 188,
-                techNote = "Audio buffer synchronized across Android & iOS via KMP shared coroutines"
-            ),
-            ExoTrack(
-                title = "Azadi Hackathon Theme",
-                subtitle = "SSIP 2.0 Grand Finale • 2000+ Teams",
-                durationSec = 245,
-                techNote = "Low-latency playback with MediaCodecAudioRenderer and 16KB page alignment"
-            ),
-            ExoTrack(
-                title = "Agilis Real-Time Stream",
-                subtitle = "Agora RTC • FCM • AWS Rekognition",
-                durationSec = 176,
-                techNote = "AudioTrack direct routing with acoustic echo cancellation (AEC)"
-            )
-        )
-    }
+    val tracks = PortfolioRepository.exoTracks
 
     var selectedTrackIndex by remember { mutableStateOf(0) }
     var isPlaying by remember { mutableStateOf(true) }

@@ -29,9 +29,14 @@ data class ProjectItem(
     val name: String,
     val date: String,
     val subtitle: String,
+    val category: String,
+    val description: String,
     val bullets: List<String>,
+    val highlights: List<String>,
     val tags: List<String>,
-    val githubUrl: String
+    val githubUrl: String,
+    val isPrivate: Boolean = false,
+    val number: String = "01"
 )
 
 data class SkillCategory(
@@ -48,6 +53,13 @@ data class EducationItem(
     val period: String,
     val cgpa: String,
     val location: String
+)
+
+data class ExoTrack(
+    val title: String,
+    val subtitle: String,
+    val durationSec: Int,
+    val techNote: String
 )
 
 object PortfolioRepository {
@@ -79,7 +91,7 @@ object PortfolioRepository {
         ExperienceItem(
             company = "Helsy Infotech Pvt Ltd",
             role = "Android Developer",
-            period = "Sep '26 – Present",
+            period = "Sep '24 – Present",
             location = "Surat, Gujarat",
             bullets = listOf(
                 "Developed production Android apps from scratch using Kotlin, Jetpack Compose, Navigation 3, and MVVM architecture.",
@@ -102,7 +114,7 @@ object PortfolioRepository {
         ExperienceItem(
             company = "Differenz System Pvt Ltd",
             role = "Junior Software Engineer",
-            period = "July '24 – Aug '26",
+            period = "July '24 – Aug '24",
             location = "Surat, Gujarat",
             bullets = listOf(
                 "Worked on Agilis, a dating application featuring match-based chat and real-time audio/video calling with Agora SDK.",
@@ -137,27 +149,20 @@ object PortfolioRepository {
 
     val projects = listOf(
         ProjectItem(
-            name = "ShopFlow",
-            date = "Nov 2026",
-            subtitle = "Modern E-Commerce Mobile App",
-            bullets = listOf(
-                "Developed an e-commerce Android application using Jetpack Compose, Navigation 3, Material 3, and MVVM.",
-                "Built a custom REST backend service using Ktor and integrated it with asynchronous Kotlin Coroutines & Flow.",
-                "Implemented offline-first product catalog and persistent shopping cart using Room DB, sorting, and pagination."
-            ),
-            tags = listOf(
-                "Kotlin", "Jetpack Compose", "Navigation 3", "Material 3", "Ktor", "Room", "Flow"
-            ),
-            githubUrl = "https://github.com/mshubhr"
-        ),
-        ProjectItem(
             name = "FieldSync",
-            date = "Mar 2026",
+            date = "Mar 2025",
             subtitle = "Cross-Platform Networking & Sync Engine",
+            category = "KOTLIN MULTIPLATFORM / FIELD OPERATIONS",
+            description = "A cross-platform field operations application built around a shared networking layer and synchronization engine.",
             bullets = listOf(
                 "Built a cross-platform mobile application using Kotlin Multiplatform (KMP) with a shared networking layer and Ktor sync engine.",
                 "Achieved 85%+ code reuse across Android and iOS platforms.",
                 "Implemented backend services for OTP authentication (Twilio/Firebase), offline caching, and device registration."
+            ),
+            highlights = listOf(
+                "Shared KMP networking layer with a Ktor sync engine",
+                "85%+ code reuse across Android and iOS",
+                "OTP authentication, offline caching and device registration"
             ),
             tags = listOf(
                 "Kotlin Multiplatform",
@@ -167,18 +172,73 @@ object PortfolioRepository {
                 "Compose Multiplatform",
                 "Firebase"
             ),
-            githubUrl = "https://github.com/mshubhr/FieldSync"
+            githubUrl = "https://github.com/mshubhr/FieldSync",
+            isPrivate = false,
+            number = "01"
+        ),
+        ProjectItem(
+            name = "ShopFlow",
+            date = "Nov 2024",
+            subtitle = "Modern E-Commerce Mobile App",
+            category = "ANDROID / COMMERCE",
+            description = "An Android shopping application with a resilient, offline-first product and cart experience.",
+            bullets = listOf(
+                "Developed an e-commerce Android application using Jetpack Compose, Navigation 3, Material 3, and MVVM.",
+                "Built a custom REST backend service using Ktor and integrated it with asynchronous Kotlin Coroutines & Flow.",
+                "Implemented offline-first product catalog and persistent shopping cart using Room DB, sorting, and pagination."
+            ),
+            highlights = listOf(
+                "Product catalog with sorting and pagination",
+                "Persistent shopping cart backed by Room",
+                "Ktor REST backend with Coroutines and Flow"
+            ),
+            tags = listOf(
+                "Kotlin", "Jetpack Compose", "Navigation 3", "Material 3", "Ktor", "Room", "Flow"
+            ),
+            githubUrl = "https://github.com/mshubhr/ShopFlow",
+            isPrivate = false,
+            number = "02"
+        ),
+        ProjectItem(
+            name = "VideoApp",
+            date = "Jun 2024",
+            subtitle = "Video Application & Go Backend",
+            category = "VIDEO / GO BACKEND",
+            description = "A video application backed by a Go service and PostgreSQL database.",
+            bullets = listOf(
+                "Designed and built a backend video processing and metadata service using Go and PostgreSQL.",
+                "Implemented video streaming endpoints with streaming buffer optimization and connection pooling.",
+                "Engineered clean REST API architecture with PostgreSQL migrations and query optimization."
+            ),
+            highlights = listOf(
+                "Go HTTP backend service with PostgreSQL storage",
+                "Video metadata management and streaming API",
+                "Clean database migrations and connection pooling"
+            ),
+            tags = listOf("Go", "PostgreSQL", "REST APIs", "Video Streaming"),
+            githubUrl = "https://github.com/mshubhr",
+            isPrivate = true,
+            number = "03"
         ),
         ProjectItem(
             name = "Clink",
-            date = "Jan 2026",
+            date = "Jan 2025",
             subtitle = "High-Throughput Mobile App with FastAPI",
+            category = "MOBILE / FASTAPI BACKEND",
+            description = "High-throughput concurrent backend and mobile interface built for real-time responsiveness.",
             bullets = listOf(
                 "Designed the Flutter UI in Dart and initially integrated APIs using Flask.",
                 "Migrated backend services to FastAPI for high-throughput concurrency, async processing, and scalability."
             ),
+            highlights = listOf(
+                "Flutter mobile client written in Dart",
+                "FastAPI asynchronous backend with Python",
+                "High-concurrency RESTful service migration"
+            ),
             tags = listOf("Flutter", "Dart", "Python", "FastAPI", "REST APIs"),
-            githubUrl = "https://github.com/mshubhr"
+            githubUrl = "https://github.com/mshubhr",
+            isPrivate = true,
+            number = "04"
         )
     )
 
@@ -207,6 +267,7 @@ object PortfolioRepository {
                 "Compose Multiplatform",
                 "Coroutines & Flow",
                 "Ktor Client/Server",
+                "SQLDelight",
                 "Retrofit",
                 "RESTful APIs",
                 "Offline-First Storage"
@@ -236,6 +297,33 @@ object PortfolioRepository {
                 "Gradle Kotlin DSL",
                 "Python & FastAPI"
             )
+        )
+    )
+
+    val exoTracks = listOf(
+        ExoTrack(
+            title = "ShopFlow Architecture",
+            subtitle = "Jetpack Compose • Navigation 3 • Room Flow",
+            durationSec = 214,
+            techNote = "ExoPlayer MediaSource with custom cache datasource and Room state sync"
+        ),
+        ExoTrack(
+            title = "FieldSync KMP Engine",
+            subtitle = "Kotlin Multiplatform • Ktor Shared Networking",
+            durationSec = 188,
+            techNote = "Audio buffer synchronized across Android & iOS via KMP shared coroutines"
+        ),
+        ExoTrack(
+            title = "Azadi Hackathon Theme",
+            subtitle = "SSIP 2.0 Grand Finale • 2000+ Teams",
+            durationSec = 245,
+            techNote = "Low-latency playback with MediaCodecAudioRenderer and 16KB page alignment"
+        ),
+        ExoTrack(
+            title = "Agilis Real-Time Stream",
+            subtitle = "Agora RTC • FCM • AWS Rekognition",
+            durationSec = 176,
+            techNote = "AudioTrack direct routing with acoustic echo cancellation (AEC)"
         )
     )
 }

@@ -20,6 +20,10 @@ import com.app.shubhrmodh.data.ProjectItem
 sealed interface NavKey {
     val title: String
 
+    data object WebPortfolio : NavKey {
+        override val title = "Editorial Portfolio"
+    }
+
     data object Home : NavKey {
         override val title = "Launcher"
     }

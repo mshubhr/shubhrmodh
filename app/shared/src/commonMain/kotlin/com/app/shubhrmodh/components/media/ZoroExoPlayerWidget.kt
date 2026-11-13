@@ -22,7 +22,6 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-// ── Palette ──────────────────────────────────────────────────────────────────
 internal val ZoroGreen      = Color(0xFF39FF14)
 private val ZoroGreenDim    = Color(0xFF1A7A0A)
 internal val ZoroGreenGlow  = Color(0x6039FF14)
@@ -32,48 +31,30 @@ private val ZoroDarkSurface = Color(0xFF0A180A)
 
 private fun degreesToRadians(deg: Double): Double = deg * PI / 180.0
 
-/**
- * Full-screen background canvas with slow-drifting Zoro green energy.
- *
- * Layers (all move very slowly, nothing flashy):
- *  1. Near-black green-tinted base gradient that shifts position gently
- *  2. Two large breathing radial orbs drifting at different speeds
- *  3. Three wide, slow diagonal energy wisps that cross the whole screen
- *  4. A faint spinning ring of dashes at the orb centre
- *  5. Very subtle 三刀流 silhouette near the bottom-right
- *
- * Drop this as the FIRST child of a Box that fills the whole screen.
- * Everything above it will render on top.
- */
 @Composable
 fun ZoroBackground(modifier: Modifier = Modifier) {
     val inf = rememberInfiniteTransition(label = "ZoroBg")
 
-    // ── Orb 1: main pulsing core (slow, 4 s) ─────────────────────────────────
     val orb1Pulse by inf.animateFloat(
         initialValue = 0.55f, targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(4000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
         label = "Orb1"
     )
-    // ── Orb 2: secondary drift (offset phase, 6 s) ───────────────────────────
     val orb2Pulse by inf.animateFloat(
         initialValue = 1f, targetValue = 0.5f,
         animationSpec = infiniteRepeatable(tween(6000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
         label = "Orb2"
     )
-    // ── Slow base-gradient shift (12 s, horizontal drift) ────────────────────
     val bgShift by inf.animateFloat(
         initialValue = 0.3f, targetValue = 0.75f,
         animationSpec = infiniteRepeatable(tween(12000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
         label = "BgShift"
     )
-    // ── Spinning ring (very slow, 18 s full rotation) ────────────────────────
     val ringRot by inf.animateFloat(
         initialValue = 0f, targetValue = 360f,
         animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Restart),
         label = "Ring"
     )
-    // ── Three wisp sweeps — very slow, wide, diagonal ────────────────────────
     val wisp1 by inf.animateFloat(
         initialValue = 0f, targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(7000, easing = LinearEasing), RepeatMode.Restart),
@@ -89,7 +70,6 @@ fun ZoroBackground(modifier: Modifier = Modifier) {
         animationSpec = infiniteRepeatable(tween(11000, easing = LinearEasing, delayMillis = 4500), RepeatMode.Restart),
         label = "W3"
     )
-    // ── Silhouette alpha breathe ──────────────────────────────────────────────
     val siloAlpha by inf.animateFloat(
         initialValue = 0.08f, targetValue = 0.22f,
         animationSpec = infiniteRepeatable(tween(5000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
@@ -100,7 +80,6 @@ fun ZoroBackground(modifier: Modifier = Modifier) {
         val w = size.width
         val h = size.height
 
-        // 1. Base gradient (slow horizontal drift)
         drawRect(
             brush = Brush.radialGradient(
                 colors = listOf(ZoroDarkSurface, ZoroDark, Color.Black),
@@ -109,7 +88,6 @@ fun ZoroBackground(modifier: Modifier = Modifier) {
             )
         )
 
-        // 2. Orb 1 — lower-right, main core
         val o1x = w * 0.78f
         val o1y = h * 0.65f
         val o1r = h * 0.55f * orb1Pulse
@@ -123,7 +101,6 @@ fun ZoroBackground(modifier: Modifier = Modifier) {
             radius = o1r
         )
 
-        // 3. Orb 2 — upper-left, secondary ambient
         val o2x = w * 0.18f
         val o2y = h * 0.22f
         val o2r = h * 0.35f * orb2Pulse
@@ -137,7 +114,6 @@ fun ZoroBackground(modifier: Modifier = Modifier) {
             radius = o2r
         )
 
-        // 4. Faint spinning ring around orb1
         rotate(ringRot, pivot = Offset(o1x, o1y)) {
             for (i in 0 until 16) {
                 val a1 = degreesToRadians((i * 22.5))
@@ -153,23 +129,14 @@ fun ZoroBackground(modifier: Modifier = Modifier) {
             }
         }
 
-        // 5. Three slow wide energy wisps crossing the full screen
         drawEnergyWisp(w, h, t = wisp1, yFrac = 0.28f, angleDeg = -18f, alpha = 0.28f, wide = true)
         drawEnergyWisp(w, h, t = wisp2, yFrac = 0.55f, angleDeg = -12f, alpha = 0.20f, wide = true)
         drawEnergyWisp(w, h, t = wisp3, yFrac = 0.78f, angleDeg = -22f, alpha = 0.15f, wide = true)
 
-        // 6. 三刀流 silhouette — very faint, bottom-right quadrant
         drawSantoryuSilhouette(o1x, o1y, h, alpha = siloAlpha)
     }
 }
 
-// ── DrawScope helpers ────────────────────────────────────────────────────────
-
-/**
- * Wide, slow energy wisp that drifts diagonally across the whole screen.
- * Unlike the old "slash" these are thick, low-alpha, wide gradient strokes —
- * more like a moving aurora band than a sword strike.
- */
 private fun DrawScope.drawEnergyWisp(
     w: Float,
     h: Float,
@@ -193,7 +160,6 @@ private fun DrawScope.drawEnergyWisp(
     val tipStart  = Offset(tipX - len * cosA, baseY - len * sinA)
     val trailEnd  = Offset(tipX - (len + trail) * cosA, baseY - (len + trail) * sinA)
 
-    // Long fading tail
     drawLine(
         brush = Brush.linearGradient(
             colors = listOf(Color.Transparent, ZoroGreen.copy(alpha = alpha * 0.6f)),
@@ -202,7 +168,6 @@ private fun DrawScope.drawEnergyWisp(
         start = trailEnd, end = tipStart,
         strokeWidth = thick, cap = StrokeCap.Round
     )
-    // Brighter leading portion
     drawLine(
         brush = Brush.linearGradient(
             colors = listOf(ZoroGreen.copy(alpha = alpha), ZoroGreen.copy(alpha = alpha * 0.3f)),
@@ -213,7 +178,6 @@ private fun DrawScope.drawEnergyWisp(
     )
 }
 
-/** Faint 三刀流 silhouette — three blade lines + tsubas */
 private fun DrawScope.drawSantoryuSilhouette(
     cx: Float, cy: Float, h: Float, alpha: Float
 ) {

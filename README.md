@@ -1,35 +1,75 @@
-This is a Kotlin Multiplatform project targeting Android, Web, Server.
+# Shubhr Modh — Android & Kotlin Multiplatform Portfolio
 
-* [/app/shared](./app/shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./app/shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./app/shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./app/shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A modern, high-performance portfolio application built with **Kotlin Multiplatform** and **Compose Multiplatform**. It features a dual-experience interface: an **Editorial Web Portfolio** for desktop and mobile web visitors, and an interactive **Android OS Simulator Launcher** showcasing native Android engineering concepts, Navigation 3 architecture, and media engines.
 
-* [/core](./core/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./core/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
-
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
-
-### Running the apps
-
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
-
-- Android app: `./gradlew :app:androidApp:assembleDebug`
-- Server: `./gradlew :server:run`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :app:webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :app:webApp:jsBrowserDevelopmentRun`
+**Live Web Portfolio:** [https://portfolio-mshubhr.vercel.app/](https://portfolio-mshubhr.vercel.app/)
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+## 🛠 Tech Stack & Architecture
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+- **Language:** Kotlin 2.x
+- **UI Framework:** Compose Multiplatform (WASM, JS & Android)
+- **Design System:** Material 3 with custom monochrome & dark color tokens
+- **Navigation:** Jetpack Navigation 3 pattern (`NavDisplay` & `rememberNav3BackStack`)
+- **Backend / Networking:** Ktor Server & Ktor Client
+- **Database / Caching:** Room Database & Flow
+- **Build System:** Gradle Kotlin DSL with Version Catalogs (`libs.versions.toml`)
+
+### Module Structure
+
+```
+├── app/
+│   ├── androidApp/   # Native Android Application target
+│   ├── shared/       # Shared Compose Multiplatform UI & portfolio domain models
+│   └── webApp/       # Web entry point (Kotlin/Wasm & Kotlin/JS)
+├── core/             # Shared foundational models and utilities
+└── server/           # Ktor backend server
+```
+
+---
+
+## 🚀 Running the Project
+
+### Web Application (Kotlin/Wasm & Kotlin/JS)
+Run the WebAssembly target (recommended for modern browsers):
+```bash
+./gradlew :app:webApp:wasmJsBrowserDevelopmentRun
+```
+Run the JavaScript target:
+```bash
+./gradlew :app:webApp:jsBrowserDevelopmentRun
+```
+
+### Android Application
+Build and install the debug APK on a connected device or emulator:
+```bash
+./gradlew :app:androidApp:assembleDebug
+```
+
+### Ktor Backend Server
+Run the local Ktor server:
+```bash
+./gradlew :server:run
+```
+
+---
+
+## 📦 Deployment Configuration
+
+The WebAssembly distribution bundle is generated via:
+```bash
+./gradlew :app:webApp:wasmJsBrowserDistribution
+```
+The production output directory is `app/webApp/build/dist/wasmJs/productionExecutable`, configured for continuous deployment on Vercel and GitHub Actions.
+
+---
+
+## 👤 Contact & Links
+
+- **Name:** Shubhr Modh
+- **Role:** Android Developer & KMP Specialist
+- **Location:** Surat, Gujarat, India
+- **GitHub:** [https://github.com/mshubhr](https://github.com/mshubhr)
+- **LinkedIn:** [https://www.linkedin.com/in/shubhr-modh-05b232222](https://www.linkedin.com/in/shubhr-modh-05b232222)
+- **Email:** [modhshubhr53@gmail.com](mailto:modhshubhr53@gmail.com)

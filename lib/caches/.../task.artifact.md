@@ -1,0 +1,6 @@
+- `[ ]` Task 1: Data Model Consolidation & Single Source of Truth (`PortfolioData.kt`, `WebPortfolioScreen.kt`, `SkillsScreen.kt`, `ExoPlayerScreen.kt`)
+- `[ ]` Task 2: Layout Responsiveness & Accessibility Enhancements (`WebPortfolioScreen.kt`, `AndroidHomeScreen.kt`, `MotionCollapsingHeader.kt`, `ProjectTechnicalStudy.kt`, `ContactScreen.kt`)
+- `[ ]` Task 3: SEO, Social Metadata & Asset Optimization (`index.html`)
+- `[ ]` Task 4: Dead Code & Dependency Cleanup (`Greeting.kt`, `GreetingUtil.kt`, `app/androidApp/build.gradle.kts`)
+- `[ ]` Task 5: Documentation & Deployment Harmonization (`README.md`, `vercel.json`, `deploy.yml`)
+- `[ ]` Task 6: Build Verification & Testing

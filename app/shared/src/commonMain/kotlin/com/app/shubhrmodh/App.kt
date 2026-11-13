@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.app.shubhrmodh.components.launcher.AndroidHomeScreen
+import com.app.shubhrmodh.components.launcher.WebPortfolioScreen
 import com.app.shubhrmodh.components.media.ExoPlayerScreen
 import com.app.shubhrmodh.components.screens.AboutScreen
 import com.app.shubhrmodh.components.screens.AchievementsScreen
@@ -23,9 +24,11 @@ import com.app.shubhrmodh.theme.PureBlack
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    initialKey: NavKey = NavKey.WebPortfolio
+) {
     PortfolioTheme {
-        val backStack = rememberNav3BackStack(initial = NavKey.Home)
+        val backStack = rememberNav3BackStack(initial = initialKey)
 
         Box(
             modifier = Modifier.fillMaxSize().background(PureBlack)
@@ -33,6 +36,10 @@ fun App() {
 
             NavDisplay(backStack = backStack) { key ->
                 when (key) {
+                    is NavKey.WebPortfolio -> WebPortfolioScreen(
+                        onToggleLauncherMode = { backStack.navigateTo(NavKey.Home) }
+                    )
+
                     is NavKey.Home -> AndroidHomeScreen(
                         onNavigate = { dest -> backStack.navigateTo(dest) })
 

@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +61,7 @@ fun AndroidHomeScreen(
     val contact = PortfolioRepository.contact
     val uriHandler = LocalUriHandler.current
     val scrollState = rememberScrollState()
+    val dockScrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -91,14 +96,14 @@ fun AndroidHomeScreen(
                     Text(
                         text = "2+ Yrs Exp • ${contact.title}",
                         color = White50,
-                        fontSize = 11.sp
+                        fontSize = 12.sp
                     )
                 }
 
                 Row(
                     modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp))
                         .background(White08).border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
-                        .clickable { onNavigate(NavKey.Projects) }.padding(horizontal = 16.dp),
+                        .clickable(role = Role.Button) { onNavigate(NavKey.Projects) }.padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -119,6 +124,7 @@ fun AndroidHomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 val appList = listOf(
+                    LauncherAppItem("Portfolio", CustomIcons.ExternalLink) { onNavigate(NavKey.WebPortfolio) },
                     LauncherAppItem("About", CustomIcons.School) { onNavigate(NavKey.About) },
                     LauncherAppItem("Experience", CustomIcons.Work) { onNavigate(NavKey.Experience) },
                     LauncherAppItem("Projects", CustomIcons.Code) { onNavigate(NavKey.Projects) },
@@ -155,6 +161,7 @@ fun AndroidHomeScreen(
             Row(
                 modifier = Modifier.clip(RoundedCornerShape(32.dp)).background(White08)
                     .border(1.dp, BorderWhite, RoundedCornerShape(32.dp))
+                    .horizontalScroll(dockScrollState)
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -217,7 +224,10 @@ fun DockItem(
                 color = if (showText) BorderWhite else Color.Transparent,
                 shape = RoundedCornerShape(21.dp)
             ).clickable(
-                interactionSource = interactionSource, indication = null, onClick = onClick
+                role = Role.Button,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
             ).padding(horizontal = if (showText) 14.dp else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -259,14 +269,17 @@ fun DockTopButton(
             scaleY = scale
         }.clip(RoundedCornerShape(21.dp)).background(if (isHovered) White15 else Color.Transparent)
             .clickable(
-                interactionSource = interactionSource, indication = null, onClick = onClick
+                role = Role.Button,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
             ).padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Icon(
             imageVector = CustomIcons.ArrowUp,
-            contentDescription = "Top",
+            contentDescription = "Scroll to top",
             tint = PureWhite,
             modifier = Modifier.size(16.dp)
         )
@@ -287,7 +300,10 @@ data class LauncherAppItem(
 fun AndroidAppIcon(app: LauncherAppItem) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(68.dp).clickable(onClick = app.onClick).padding(vertical = 4.dp)
+        modifier = Modifier.width(68.dp)
+            .clickable(role = Role.Button, onClick = app.onClick)
+            .padding(vertical = 4.dp)
+            .semantics { contentDescription = "Open ${app.name}" }
     ) {
         Box(
             modifier = Modifier.size(54.dp).clip(RoundedCornerShape(16.dp)).background(White15)
@@ -296,7 +312,7 @@ fun AndroidAppIcon(app: LauncherAppItem) {
         ) {
             Icon(
                 imageVector = app.icon,
-                contentDescription = app.name,
+                contentDescription = null,
                 tint = PureWhite,
                 modifier = Modifier.size(24.dp)
             )
