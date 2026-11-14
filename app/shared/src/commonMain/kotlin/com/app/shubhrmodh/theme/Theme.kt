@@ -1,6 +1,5 @@
 package com.app.shubhrmodh.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -11,101 +10,98 @@ import androidx.compose.ui.graphics.Color
 
 val LocalDarkTheme = staticCompositionLocalOf { true }
 
+// Android Green Dark Theme Palette
+val AndroidDarkBg = Color(0xFF0B0F0D)
+val AndroidCardDark = Color(0xFF121714)
+val AndroidCardInner = Color(0xFF1A211D)
+val AndroidTextWhite = Color(0xFFF0F2F0)
+val AndroidGreenAccent = Color(0xFF3DDC84) // Iconic Android Green
+val AndroidGreenDarkContainer = Color(0xFF183325)
+val AndroidSoftGrey = Color(0xFF9EA6A1)
+val AndroidBorderDark = Color(0xFF233028)
+
+// Compatibility fallbacks
+val WarmOffWhite = AndroidDarkBg
+val PureCardWhite = AndroidCardDark
+val DeepCharcoal = AndroidTextWhite
+val CobaltBlue = AndroidGreenAccent
+val SoftGrey = AndroidSoftGrey
+val SubtleBorderColor = AndroidBorderDark
+val AccentBlueLight = AndroidGreenDarkContainer
+
 val RealPureBlack = Color(0xFF000000)
 val RealPureWhite = Color(0xFFFFFFFF)
 
 val PureBlack: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0xFF000000) else Color(0xFFFFFFFF)
+    @Composable get() = AndroidDarkBg
 
 val PureWhite: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0xFFFFFFFF) else Color(0xFF09090B)
+    @Composable get() = AndroidTextWhite
 
 val White90: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0xE6FFFFFF) else Color(0xE6000000)
+    @Composable get() = Color(0xE6F0F2F0)
 
 val White70: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0xB3FFFFFF) else Color(0xB3000000)
+    @Composable get() = AndroidSoftGrey
 
 val White50: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0x80FFFFFF) else Color(0x80000000)
+    @Composable get() = Color(0x809EA6A1)
 
 val White30: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0x4DFFFFFF) else Color(0x4D000000)
+    @Composable get() = Color(0x4D9EA6A1)
 
 val White15: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0x26FFFFFF) else Color(0x1F000000)
+    @Composable get() = AndroidBorderDark
 
 val White08: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0x14FFFFFF) else Color(0x0D000000)
+    @Composable get() = AndroidCardDark
 
 val White05: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0x0DFFFFFF) else Color(0x08000000)
+    @Composable get() = AndroidGreenDarkContainer
 
 val Black90: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0xE6000000) else Color(0xE6FFFFFF)
+    @Composable get() = AndroidDarkBg
 
 val Black80: Color
-    @Composable get() = if (LocalDarkTheme.current) Color(0xCC000000) else Color(0xCCFFFFFF)
+    @Composable get() = AndroidCardInner
 
 val BorderWhite: Color
-    @Composable get() = White15
+    @Composable get() = AndroidBorderDark
 
 val BorderWhiteBold: Color
-    @Composable get() = White30
+    @Composable get() = Color(0xFF32453A)
 
-private val MonochromeDarkColors = darkColorScheme(
-    primary = Color(0xFFFFFFFF),
-    onPrimary = Color(0xFF000000),
-    primaryContainer = Color(0xFFFFFFFF),
-    onPrimaryContainer = Color(0xFF000000),
-    secondary = Color(0xFFFFFFFF),
-    onSecondary = Color(0xFF000000),
-    secondaryContainer = Color(0x26FFFFFF),
-    onSecondaryContainer = Color(0xFFFFFFFF),
-    tertiary = Color(0xFFFFFFFF),
-    onTertiary = Color(0xFF000000),
-    background = Color(0xFF000000),
-    onBackground = Color(0xFFFFFFFF),
-    surface = Color(0xFF000000),
-    onSurface = Color(0xFFFFFFFF),
-    surfaceVariant = Color(0x14FFFFFF),
-    onSurfaceVariant = Color(0xB3FFFFFF),
-    outline = Color(0x26FFFFFF),
-    outlineVariant = Color(0x14FFFFFF),
-)
-
-private val MonochromeLightColors = lightColorScheme(
-    primary = Color(0xFF09090B),
-    onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFF09090B),
-    onPrimaryContainer = Color(0xFFFFFFFF),
-    secondary = Color(0xFF09090B),
-    onSecondary = Color(0xFFFFFFFF),
-    secondaryContainer = Color(0x1F000000),
-    onSecondaryContainer = Color(0xFF09090B),
-    tertiary = Color(0xFF09090B),
-    onTertiary = Color(0xFFFFFFFF),
-    background = Color(0xFFFFFFFF),
-    onBackground = Color(0xFF09090B),
-    surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF09090B),
-    surfaceVariant = Color(0x0D000000),
-    onSurfaceVariant = Color(0xB3000000),
-    outline = Color(0x1F000000),
-    outlineVariant = Color(0x0D000000),
+private val AndroidGreenDarkColors = darkColorScheme(
+    primary = AndroidGreenAccent,
+    onPrimary = Color(0xFF0B0F0D),
+    primaryContainer = AndroidGreenDarkContainer,
+    onPrimaryContainer = AndroidGreenAccent,
+    secondary = AndroidGreenAccent,
+    onSecondary = Color(0xFF0B0F0D),
+    secondaryContainer = AndroidGreenDarkContainer,
+    onSecondaryContainer = AndroidTextWhite,
+    tertiary = AndroidGreenAccent,
+    onTertiary = Color(0xFF0B0F0D),
+    background = AndroidDarkBg,
+    onBackground = AndroidTextWhite,
+    surface = AndroidCardDark,
+    onSurface = AndroidTextWhite,
+    surfaceVariant = AndroidCardInner,
+    onSurfaceVariant = AndroidSoftGrey,
+    outline = AndroidBorderDark,
+    outlineVariant = AndroidBorderDark,
 )
 
 @Composable
 fun PortfolioTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true, // Android Green Dark Theme by default
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) MonochromeDarkColors else MonochromeLightColors
     CompositionLocalProvider(
-        LocalDarkTheme provides darkTheme
+        LocalDarkTheme provides true
     ) {
         MaterialTheme(
-            colorScheme = colorScheme,
+            colorScheme = AndroidGreenDarkColors,
             content = content
         )
     }

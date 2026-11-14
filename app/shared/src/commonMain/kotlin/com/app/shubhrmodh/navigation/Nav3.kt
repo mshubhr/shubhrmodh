@@ -66,22 +66,17 @@ sealed interface NavKey {
 }
 
 class Nav3BackStack(
-    initial: NavKey = NavKey.Home
+    initial: NavKey = NavKey.WebPortfolio
 ) {
     val stack = mutableStateListOf<NavKey>(initial)
 
     val current: NavKey
-        get() = stack.lastOrNull() ?: NavKey.Home
+        get() = stack.lastOrNull() ?: NavKey.WebPortfolio
 
     val canGoBack: Boolean
         get() = stack.size > 1
 
     fun navigateTo(key: NavKey) {
-        if (key is NavKey.Home) {
-            stack.clear()
-            stack.add(NavKey.Home)
-            return
-        }
         if (stack.lastOrNull() != key) {
             stack.add(key)
         }
@@ -95,9 +90,18 @@ class Nav3BackStack(
         return false
     }
 
+    fun popToPortfolio() {
+        stack.clear()
+        stack.add(NavKey.WebPortfolio)
+    }
+
     fun popToHome() {
         stack.clear()
-        stack.add(NavKey.Home)
+        if (stack.contains(NavKey.WebPortfolio)) {
+            stack.add(NavKey.Home)
+        } else {
+            stack.add(NavKey.Home)
+        }
     }
 
     fun removeEntry(key: NavKey) {
@@ -108,7 +112,7 @@ class Nav3BackStack(
 }
 
 @Composable
-fun rememberNav3BackStack(initial: NavKey = NavKey.Home): Nav3BackStack {
+fun rememberNav3BackStack(initial: NavKey = NavKey.WebPortfolio): Nav3BackStack {
     return remember { Nav3BackStack(initial) }
 }
 
@@ -121,10 +125,13 @@ fun NavDisplay(
     AnimatedContent(
         targetState = backStack.current,
         transitionSpec = {
-            if (targetState == NavKey.Home) {
+            if (targetState == NavKey.WebPortfolio) {
+                (fadeIn(animationSpec = tween(220)) + scaleIn(initialScale = 0.95f, animationSpec = tween(220)))
+                    .togetherWith(fadeOut(animationSpec = tween(180)) + scaleOut(targetScale = 1.05f, animationSpec = tween(180)))
+            } else if (targetState == NavKey.Home) {
                 (fadeIn(animationSpec = tween(220)) + scaleIn(initialScale = 0.92f, animationSpec = tween(220)))
                     .togetherWith(fadeOut(animationSpec = tween(180)) + scaleOut(targetScale = 1.05f, animationSpec = tween(180)))
-            } else if (initialState == NavKey.Home) {
+            } else if (initialState == NavKey.Home || initialState == NavKey.WebPortfolio) {
                 (fadeIn(animationSpec = tween(260)) + scaleIn(initialScale = 1.05f, animationSpec = tween(260)))
                     .togetherWith(fadeOut(animationSpec = tween(200)) + scaleOut(targetScale = 0.95f, animationSpec = tween(200)))
             } else {

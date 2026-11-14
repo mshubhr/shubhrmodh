@@ -10,6 +10,7 @@ data class ContactInfo(
     val portfolioUrl: String,
     val githubUrl: String,
     val linkedinUrl: String,
+    val googleDeveloperUrl: String,
     val gitlabUrl: String,
     val mediumUrl: String,
     val twitterUrl: String,
@@ -31,6 +32,9 @@ data class ProjectItem(
     val subtitle: String,
     val category: String,
     val description: String,
+    val problem: String = "",
+    val contribution: String = "",
+    val outcome: String = "",
     val bullets: List<String>,
     val highlights: List<String>,
     val tags: List<String>,
@@ -73,6 +77,7 @@ object PortfolioRepository {
         portfolioUrl = "https://portfolio-mshubhr.vercel.app/",
         githubUrl = "https://github.com/mshubhr",
         linkedinUrl = "https://www.linkedin.com/in/shubhr-modh-05b232222",
+        googleDeveloperUrl = "https://g.dev/shubhr_modh",
         gitlabUrl = "https://gitlab.com/mshubhr",
         mediumUrl = "https://medium.com/@mshubhr",
         twitterUrl = "https://x.com/ShubhrM",
@@ -91,7 +96,7 @@ object PortfolioRepository {
         ExperienceItem(
             company = "Helsy Infotech Pvt Ltd",
             role = "Android Developer",
-            period = "Sep '24 – Present",
+            period = "Sep '26 – Present",
             location = "Surat, Gujarat",
             bullets = listOf(
                 "Developed production Android apps from scratch using Kotlin, Jetpack Compose, Navigation 3, and MVVM architecture.",
@@ -114,7 +119,7 @@ object PortfolioRepository {
         ExperienceItem(
             company = "Differenz System Pvt Ltd",
             role = "Junior Software Engineer",
-            period = "July '24 – Aug '24",
+            period = "July '24 – Aug '26",
             location = "Surat, Gujarat",
             bullets = listOf(
                 "Worked on Agilis, a dating application featuring match-based chat and real-time audio/video calling with Agora SDK.",
@@ -150,7 +155,7 @@ object PortfolioRepository {
     val projects = listOf(
         ProjectItem(
             name = "FieldSync",
-            date = "Mar 2025",
+            date = "Mar 2026",
             subtitle = "Cross-Platform Networking & Sync Engine",
             category = "KOTLIN MULTIPLATFORM / FIELD OPERATIONS",
             description = "A cross-platform field operations application built around a shared networking layer and synchronization engine.",
@@ -178,7 +183,7 @@ object PortfolioRepository {
         ),
         ProjectItem(
             name = "ShopFlow",
-            date = "Nov 2024",
+            date = "Nov 2026",
             subtitle = "Modern E-Commerce Mobile App",
             category = "ANDROID / COMMERCE",
             description = "An Android shopping application with a resilient, offline-first product and cart experience.",
@@ -201,7 +206,7 @@ object PortfolioRepository {
         ),
         ProjectItem(
             name = "VideoApp",
-            date = "Jun 2024",
+            date = "Jun 2026",
             subtitle = "Video Application & Go Backend",
             category = "VIDEO / GO BACKEND",
             description = "A video application backed by a Go service and PostgreSQL database.",
@@ -222,7 +227,7 @@ object PortfolioRepository {
         ),
         ProjectItem(
             name = "Clink",
-            date = "Jan 2025",
+            date = "Jan 2026",
             subtitle = "High-Throughput Mobile App with FastAPI",
             category = "MOBILE / FASTAPI BACKEND",
             description = "High-throughput concurrent backend and mobile interface built for real-time responsiveness.",

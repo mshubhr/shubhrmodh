@@ -47,6 +47,7 @@ import com.app.shubhrmodh.components.media.ZoroBackground
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.navigation.NavKey
 import com.app.shubhrmodh.theme.BorderWhite
+import com.app.shubhrmodh.theme.CobaltBlue
 import com.app.shubhrmodh.theme.PortfolioTheme
 import com.app.shubhrmodh.theme.PureWhite
 import com.app.shubhrmodh.theme.White08
@@ -56,7 +57,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AndroidHomeScreen(
-    onNavigate: (NavKey) -> Unit, modifier: Modifier = Modifier
+    onNavigate: (NavKey) -> Unit,
+    modifier: Modifier = Modifier,
+    onBackToPortfolio: () -> Unit = {}
 ) {
     val contact = PortfolioRepository.contact
     val uriHandler = LocalUriHandler.current
@@ -74,12 +77,57 @@ fun AndroidHomeScreen(
                 .padding(horizontal = 20.dp, vertical = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Top Navigation Banner to exit simulator back to web portfolio
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(CobaltBlue)
+                        .clickable(role = Role.Button, onClick = onBackToPortfolio)
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = CustomIcons.ArrowBack,
+                        contentDescription = "Exit to Portfolio Website",
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "Exit Simulator (Back to Portfolio)",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Text(
+                    text = "ANDROID OS",
+                    color = White50,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+            }
+
             Column(
-                modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(scrollState),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 20.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 20.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -101,9 +149,14 @@ fun AndroidHomeScreen(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp))
-                        .background(White08).border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
-                        .clickable(role = Role.Button) { onNavigate(NavKey.Projects) }.padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(White08)
+                        .border(1.dp, BorderWhite, RoundedCornerShape(24.dp))
+                        .clickable(role = Role.Button) { onNavigate(NavKey.Projects) }
+                        .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -124,7 +177,7 @@ fun AndroidHomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 val appList = listOf(
-                    LauncherAppItem("Portfolio", CustomIcons.ExternalLink) { onNavigate(NavKey.WebPortfolio) },
+                    LauncherAppItem("Exit to Web", CustomIcons.ArrowBack, onBackToPortfolio),
                     LauncherAppItem("About", CustomIcons.School) { onNavigate(NavKey.About) },
                     LauncherAppItem("Experience", CustomIcons.Work) { onNavigate(NavKey.Experience) },
                     LauncherAppItem("Projects", CustomIcons.Code) { onNavigate(NavKey.Projects) },
@@ -132,19 +185,16 @@ fun AndroidHomeScreen(
                     LauncherAppItem("ExoPlayer", CustomIcons.Disc) { onNavigate(NavKey.ExoPlayer) },
                     LauncherAppItem("Honors", CustomIcons.Trophy) { onNavigate(NavKey.Achievements) },
                     LauncherAppItem("Dialer", CustomIcons.Phone) { onNavigate(NavKey.Contact) },
-                    LauncherAppItem(
-                        "GitHub", CustomIcons.GitHub
-                    ) { uriHandler.openUri(contact.githubUrl) },
-                    LauncherAppItem(
-                        "LinkedIn", CustomIcons.LinkedIn
-                    ) { uriHandler.openUri(contact.linkedinUrl) },
-                    LauncherAppItem(
-                        "Email", CustomIcons.Mail
-                    ) { uriHandler.openUri("mailto:${contact.email}") })
+                    LauncherAppItem("GitHub", CustomIcons.GitHub) { uriHandler.openUri(contact.githubUrl) },
+                    LauncherAppItem("LinkedIn", CustomIcons.LinkedIn) { uriHandler.openUri(contact.linkedinUrl) },
+                    LauncherAppItem("Email", CustomIcons.Mail) { uriHandler.openUri("mailto:${contact.email}") }
+                )
 
                 appList.chunked(4).forEach { rowApps ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         rowApps.forEach { app ->
@@ -159,7 +209,9 @@ fun AndroidHomeScreen(
             Spacer(modifier = Modifier.height(14.dp))
 
             Row(
-                modifier = Modifier.clip(RoundedCornerShape(32.dp)).background(White08)
+                modifier = Modifier
+                    .clip(RoundedCornerShape(32.dp))
+                    .background(White08)
                     .border(1.dp, BorderWhite, RoundedCornerShape(32.dp))
                     .horizontalScroll(dockScrollState)
                     .padding(horizontal = 12.dp, vertical = 6.dp),
@@ -167,31 +219,50 @@ fun AndroidHomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DockItem(
-                    icon = CustomIcons.Sparkles, label = "Home", onClick = { onNavigate(NavKey.Home) })
+                    icon = CustomIcons.ArrowBack,
+                    label = "Exit to Web",
+                    isSelected = true,
+                    onClick = onBackToPortfolio
+                )
 
                 Box(
-                    modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
+                    modifier = Modifier
+                        .width(1.dp)
+                        .height(24.dp)
+                        .background(BorderWhite)
                 )
 
                 DockItem(
+                    icon = CustomIcons.Sparkles,
+                    label = "Home",
+                    onClick = { onNavigate(NavKey.Home) }
+                )
+                DockItem(
                     icon = CustomIcons.Code,
                     label = "Projects",
-                    onClick = { onNavigate(NavKey.Projects) })
+                    onClick = { onNavigate(NavKey.Projects) }
+                )
                 DockItem(
                     icon = CustomIcons.Mail,
                     label = "Email",
-                    onClick = { uriHandler.openUri("mailto:${contact.email}") })
+                    onClick = { uriHandler.openUri("mailto:${contact.email}") }
+                )
                 DockItem(
                     icon = CustomIcons.LinkedIn,
                     label = "LinkedIn",
-                    onClick = { uriHandler.openUri(contact.linkedinUrl) })
+                    onClick = { uriHandler.openUri(contact.linkedinUrl) }
+                )
                 DockItem(
                     icon = CustomIcons.GitHub,
                     label = "GitHub",
-                    onClick = { uriHandler.openUri(contact.githubUrl) })
+                    onClick = { uriHandler.openUri(contact.githubUrl) }
+                )
 
                 Box(
-                    modifier = Modifier.width(1.dp).height(24.dp).background(BorderWhite)
+                    modifier = Modifier
+                        .width(1.dp)
+                        .height(24.dp)
+                        .background(BorderWhite)
                 )
 
                 DockTopButton {
@@ -206,7 +277,10 @@ fun AndroidHomeScreen(
 
 @Composable
 fun DockItem(
-    icon: ImageVector, label: String, isSelected: Boolean = false, onClick: () -> Unit
+    icon: ImageVector,
+    label: String,
+    isSelected: Boolean = false,
+    onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
@@ -214,26 +288,33 @@ fun DockItem(
     val showText = isHovered || isSelected
 
     Row(
-        modifier = Modifier.height(42.dp).graphicsLayer {
-            val scale = if (isHovered) 1.08f else 1f
-            scaleX = scale
-            scaleY = scale
-        }.clip(RoundedCornerShape(21.dp)).background(if (showText) White15 else Color.Transparent)
+        modifier = Modifier
+            .height(42.dp)
+            .graphicsLayer {
+                val scale = if (isHovered) 1.08f else 1f
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(RoundedCornerShape(21.dp))
+            .background(if (showText) White15 else Color.Transparent)
             .border(
                 width = if (showText) 1.dp else 0.dp,
                 color = if (showText) BorderWhite else Color.Transparent,
                 shape = RoundedCornerShape(21.dp)
-            ).clickable(
+            )
+            .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick
-            ).padding(horizontal = if (showText) 14.dp else 0.dp),
+            )
+            .padding(horizontal = if (showText) 14.dp else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
-            modifier = Modifier.size(42.dp), contentAlignment = Alignment.Center
+            modifier = Modifier.size(42.dp),
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
@@ -263,17 +344,22 @@ fun DockTopButton(
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     Row(
-        modifier = Modifier.height(42.dp).graphicsLayer {
-            val scale = if (isHovered) 1.10f else 1f
-            scaleX = scale
-            scaleY = scale
-        }.clip(RoundedCornerShape(21.dp)).background(if (isHovered) White15 else Color.Transparent)
+        modifier = Modifier
+            .height(42.dp)
+            .graphicsLayer {
+                val scale = if (isHovered) 1.10f else 1f
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(RoundedCornerShape(21.dp))
+            .background(if (isHovered) White15 else Color.Transparent)
             .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick
-            ).padding(horizontal = 14.dp),
+            )
+            .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -287,7 +373,7 @@ fun DockTopButton(
             text = "Top",
             color = PureWhite,
             fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -300,13 +386,17 @@ data class LauncherAppItem(
 fun AndroidAppIcon(app: LauncherAppItem) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(68.dp)
+        modifier = Modifier
+            .width(68.dp)
             .clickable(role = Role.Button, onClick = app.onClick)
             .padding(vertical = 4.dp)
             .semantics { contentDescription = "Open ${app.name}" }
     ) {
         Box(
-            modifier = Modifier.size(54.dp).clip(RoundedCornerShape(16.dp)).background(White15)
+            modifier = Modifier
+                .size(54.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(White15)
                 .border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
@@ -334,6 +424,8 @@ fun AndroidAppIcon(app: LauncherAppItem) {
 private fun AndroidHomeScreenPreview() {
     PortfolioTheme {
         AndroidHomeScreen(
-            onNavigate = {})
+            onNavigate = {},
+            onBackToPortfolio = {}
+        )
     }
 }

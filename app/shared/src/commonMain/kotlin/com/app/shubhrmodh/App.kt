@@ -33,7 +33,6 @@ fun App(
         Box(
             modifier = Modifier.fillMaxSize().background(PureBlack)
         ) {
-
             NavDisplay(backStack = backStack) { key ->
                 when (key) {
                     is NavKey.WebPortfolio -> WebPortfolioScreen(
@@ -41,7 +40,13 @@ fun App(
                     )
 
                     is NavKey.Home -> AndroidHomeScreen(
-                        onNavigate = { dest -> backStack.navigateTo(dest) })
+                        onNavigate = { dest -> backStack.navigateTo(dest) },
+                        onBackToPortfolio = {
+                            if (!backStack.pop()) {
+                                backStack.popToPortfolio()
+                            }
+                        }
+                    )
 
                     is NavKey.About -> AboutScreen(
                         onBack = { backStack.pop() })
