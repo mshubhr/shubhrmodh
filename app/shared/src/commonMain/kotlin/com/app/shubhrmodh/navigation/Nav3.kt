@@ -48,10 +48,6 @@ sealed interface NavKey {
         override val title = "Tech Stack"
     }
 
-    data object ExoPlayer : NavKey {
-        override val title = "ExoPlayer Media"
-    }
-
     data object Achievements : NavKey {
         override val title = "Honors"
     }

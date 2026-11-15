@@ -2,7 +2,6 @@ package com.app.shubhrmodh.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -10,17 +9,15 @@ import androidx.compose.ui.graphics.Color
 
 val LocalDarkTheme = staticCompositionLocalOf { true }
 
-// Android Green Dark Theme Palette
 val AndroidDarkBg = Color(0xFF0B0F0D)
 val AndroidCardDark = Color(0xFF121714)
 val AndroidCardInner = Color(0xFF1A211D)
 val AndroidTextWhite = Color(0xFFF0F2F0)
-val AndroidGreenAccent = Color(0xFF3DDC84) // Iconic Android Green
+val AndroidGreenAccent = Color(0xFF3DDC84)
 val AndroidGreenDarkContainer = Color(0xFF183325)
 val AndroidSoftGrey = Color(0xFF9EA6A1)
 val AndroidBorderDark = Color(0xFF233028)
 
-// Compatibility fallbacks
 val WarmOffWhite = AndroidDarkBg
 val PureCardWhite = AndroidCardDark
 val DeepCharcoal = AndroidTextWhite
@@ -94,15 +91,13 @@ private val AndroidGreenDarkColors = darkColorScheme(
 
 @Composable
 fun PortfolioTheme(
-    darkTheme: Boolean = true, // Android Green Dark Theme by default
-    content: @Composable () -> Unit
+    darkTheme: Boolean = true,  content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
         LocalDarkTheme provides true
     ) {
         MaterialTheme(
-            colorScheme = AndroidGreenDarkColors,
-            content = content
+            colorScheme = AndroidGreenDarkColors, content = content
         )
     }
 }

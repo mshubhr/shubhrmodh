@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -63,6 +65,9 @@ import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.data.ProjectItem
 import com.app.shubhrmodh.data.SkillCategory
 import com.app.shubhrmodh.prefersReducedMotion
+import org.jetbrains.compose.resources.painterResource
+import shubhrmodh.app.shared.generated.resources.Res
+import shubhrmodh.app.shared.generated.resources.zoro
 import com.app.shubhrmodh.theme.AndroidBorderDark
 import com.app.shubhrmodh.theme.AndroidCardDark
 import com.app.shubhrmodh.theme.AndroidCardInner
@@ -612,7 +617,6 @@ private fun StyledTextInput(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun HeroSection(
     reduceMotion: Boolean,
@@ -635,68 +639,175 @@ private fun HeroSection(
                 visible = true,
                 enter = if (reduceMotion) EnterTransition.None else fadeIn(tween(400)) + slideInVertically(tween(400)) { it / 16 }
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    Text(
-                        text = "Hi, I'm Shubhr.",
-                        color = AndroidGreenAccent,
-                        fontSize = if (compact) 22.sp else 28.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = (-0.5).sp
-                    )
-                    Text(
-                        text = "Android Developer building\nthoughtful mobile experiences.",
-                        color = AndroidTextWhite,
-                        fontSize = if (compact) 34.sp else 54.sp,
-                        lineHeight = if (compact) 42.sp else 62.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-1.2).sp
-                    )
-                    Text(
-                        text = "Focused on building reliable, high-performance Android applications and shared Kotlin Multiplatform architectures that balance engineering rigor with clean user experience.",
-                        color = AndroidSoftGrey,
-                        fontSize = if (compact) 15.sp else 18.sp,
-                        lineHeight = if (compact) 24.sp else 28.sp,
-                        modifier = Modifier.fillMaxWidth(if (compact) 1f else 0.72f)
-                    )
+                if (compact) {
+                    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(280.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(AndroidCardDark)
+                                .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp))
+                        ) {
+                            Image(
+                                painter = painterResource(Res.drawable.zoro),
+                                contentDescription = "Zoro Artwork",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
 
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(top = 4.dp)
+                        Text(
+                            text = "Hi, I'm Shubhr.",
+                            color = AndroidGreenAccent,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = (-0.5).sp
+                        )
+                        Text(
+                            text = "Android Developer building\nthoughtful mobile experiences.",
+                            color = AndroidTextWhite,
+                            fontSize = 34.sp,
+                            lineHeight = 42.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-1.2).sp
+                        )
+                        Text(
+                            text = "Focused on building reliable, high-performance Android applications and shared Kotlin Multiplatform architectures that balance engineering rigor with clean user experience.",
+                            color = AndroidSoftGrey,
+                            fontSize = 15.sp,
+                            lineHeight = 24.sp,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            val techStack = listOf("Kotlin", "Jetpack Compose", "Kotlin Multiplatform", "Navigation 3", "MVVM & Clean Architecture")
+                            techStack.forEach { tech ->
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(AndroidCardDark)
+                                        .border(1.dp, AndroidBorderDark, RoundedCornerShape(6.dp))
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = tech,
+                                        color = AndroidTextWhite,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(Modifier.height(8.dp))
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            PrimaryButton(
+                                label = "Explore my work →",
+                                onClick = onProjects
+                            )
+                            SecondaryButton(
+                                label = "Get in touch ↗",
+                                onClick = onContact
+                            )
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val techStack = listOf("Kotlin", "Jetpack Compose", "Kotlin Multiplatform", "Navigation 3", "MVVM & Clean Architecture")
-                        techStack.forEach { tech ->
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(AndroidCardDark)
-                                    .border(1.dp, AndroidBorderDark, RoundedCornerShape(6.dp))
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                        Column(
+                            modifier = Modifier.weight(1f).padding(end = 40.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
+                            Text(
+                                text = "Hi, I'm Shubhr.",
+                                color = AndroidGreenAccent,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = (-0.5).sp
+                            )
+                            Text(
+                                text = "Android Developer building\nthoughtful mobile experiences.",
+                                color = AndroidTextWhite,
+                                fontSize = 54.sp,
+                                lineHeight = 62.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-1.2).sp
+                            )
+                            Text(
+                                text = "Focused on building reliable, high-performance Android applications and shared Kotlin Multiplatform architectures that balance engineering rigor with clean user experience.",
+                                color = AndroidSoftGrey,
+                                fontSize = 18.sp,
+                                lineHeight = 28.sp,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(top = 4.dp)
                             ) {
-                                Text(
-                                    text = tech,
-                                    color = AndroidTextWhite,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium
+                                val techStack = listOf("Kotlin", "Jetpack Compose", "Kotlin Multiplatform", "Navigation 3", "MVVM & Clean Architecture")
+                                techStack.forEach { tech ->
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(6.dp))
+                                            .background(AndroidCardDark)
+                                            .border(1.dp, AndroidBorderDark, RoundedCornerShape(6.dp))
+                                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                                    ) {
+                                        Text(
+                                            text = tech,
+                                            color = AndroidTextWhite,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(Modifier.height(8.dp))
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                PrimaryButton(
+                                    label = "Explore my work →",
+                                    onClick = onProjects
+                                )
+                                SecondaryButton(
+                                    label = "Get in touch ↗",
+                                    onClick = onContact
                                 )
                             }
                         }
-                    }
 
-                    Spacer(Modifier.height(8.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(14.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        PrimaryButton(
-                            label = "Explore my work →",
-                            onClick = onProjects
-                        )
-                        SecondaryButton(
-                            label = "Get in touch ↗",
-                            onClick = onContact
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(width = 380.dp, height = 440.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(AndroidCardDark)
+                                .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp))
+                        ) {
+                            Image(
+                                painter = painterResource(Res.drawable.zoro),
+                                contentDescription = "Zoro Artwork",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 }
             }
@@ -904,7 +1015,6 @@ private fun ProjectCard(
                 lineHeight = 23.sp
             )
 
-            // Problem / Contribution / Outcome structured breakdown
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1260,7 +1370,6 @@ private fun AboutCard(
                     .background(AndroidBorderDark)
             )
 
-            // Education
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = "EDUCATION",
@@ -1294,7 +1403,6 @@ private fun AboutCard(
                     .background(AndroidBorderDark)
             )
 
-            // Achievement
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = "ACHIEVEMENT",

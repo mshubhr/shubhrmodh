@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.app.shubhrmodh.components.launcher.AndroidHomeScreen
 import com.app.shubhrmodh.components.launcher.WebPortfolioScreen
-import com.app.shubhrmodh.components.media.ExoPlayerScreen
 import com.app.shubhrmodh.components.screens.AboutScreen
 import com.app.shubhrmodh.components.screens.AchievementsScreen
 import com.app.shubhrmodh.components.screens.ContactScreen
@@ -61,9 +60,6 @@ fun App(
                         onBack = { backStack.pop() })
 
                     is NavKey.Skills -> SkillsScreen(
-                        onBack = { backStack.pop() })
-
-                    is NavKey.ExoPlayer -> ExoPlayerScreen(
                         onBack = { backStack.pop() })
 
                     is NavKey.Achievements -> AchievementsScreen(

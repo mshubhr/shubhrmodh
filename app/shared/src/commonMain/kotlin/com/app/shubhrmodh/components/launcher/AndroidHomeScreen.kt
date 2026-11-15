@@ -43,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.components.CustomIcons
-import com.app.shubhrmodh.components.media.ZoroBackground
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.navigation.NavKey
 import com.app.shubhrmodh.theme.BorderWhite
@@ -68,7 +67,6 @@ fun AndroidHomeScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = modifier.fillMaxSize()) {
-        ZoroBackground()
 
         Column(
             modifier = Modifier
@@ -77,7 +75,6 @@ fun AndroidHomeScreen(
                 .padding(horizontal = 20.dp, vertical = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top Navigation Banner to exit simulator back to web portfolio
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,7 +179,6 @@ fun AndroidHomeScreen(
                     LauncherAppItem("Experience", CustomIcons.Work) { onNavigate(NavKey.Experience) },
                     LauncherAppItem("Projects", CustomIcons.Code) { onNavigate(NavKey.Projects) },
                     LauncherAppItem("Skills", CustomIcons.Sparkles) { onNavigate(NavKey.Skills) },
-                    LauncherAppItem("ExoPlayer", CustomIcons.Disc) { onNavigate(NavKey.ExoPlayer) },
                     LauncherAppItem("Honors", CustomIcons.Trophy) { onNavigate(NavKey.Achievements) },
                     LauncherAppItem("Dialer", CustomIcons.Phone) { onNavigate(NavKey.Contact) },
                     LauncherAppItem("GitHub", CustomIcons.GitHub) { uriHandler.openUri(contact.githubUrl) },

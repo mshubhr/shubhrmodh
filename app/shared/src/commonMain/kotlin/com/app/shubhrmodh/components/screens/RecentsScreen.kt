@@ -45,7 +45,6 @@ fun RecentsScreen(
 ) {
     val recentApps = listOf(
         Pair(NavKey.Projects, "ShopFlow & FieldSync KMP Projects"),
-        Pair(NavKey.ExoPlayer, "ExoPlayer Media3 Audio Engine"),
         Pair(NavKey.Experience, "Helsy Infotech & Differenz System"),
         Pair(NavKey.Skills, "Kotlin, Compose & Clean Architecture"),
         Pair(NavKey.About, "Shubhr Modh Profile & Specs"),
