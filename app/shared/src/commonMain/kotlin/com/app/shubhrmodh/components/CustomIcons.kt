@@ -285,4 +285,22 @@ object CustomIcons {
             }
         }.build()
     }
+
+    val ArrowUpRight: ImageVector by lazy {
+        ImageVector.Builder("ArrowUpRight", 24.dp, 24.dp, 24f, 24f).apply {
+            path(stroke = SolidColor(Color.White), strokeLineWidth = 2f, strokeLineCap = StrokeCap.Round, strokeLineJoin = StrokeJoin.Round) {
+                moveTo(7f, 17f); lineTo(17f, 7f)
+                moveTo(7f, 7f); horizontalLineTo(17f); verticalLineTo(17f)
+            }
+        }.build()
+    }
+
+    val ArrowRight: ImageVector by lazy {
+        ImageVector.Builder("ArrowRight", 24.dp, 24.dp, 24f, 24f).apply {
+            path(stroke = SolidColor(Color.White), strokeLineWidth = 2f, strokeLineCap = StrokeCap.Round, strokeLineJoin = StrokeJoin.Round) {
+                moveTo(5f, 12f); horizontalLineTo(19f)
+                moveTo(12f, 5f); lineTo(19f, 12f); lineTo(12f, 19f)
+            }
+        }.build()
+    }
 }

@@ -186,12 +186,23 @@ fun ContactScreen(
                     }
 
                     if (uri != null) {
-                        Text(
-                            text = "OPEN ↗",
-                            color = PureWhite,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "OPEN",
+                                color = PureWhite,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Icon(
+                                imageVector = CustomIcons.ArrowUpRight,
+                                contentDescription = null,
+                                tint = PureWhite,
+                                modifier = Modifier.size(12.dp)
+                            )
+                        }
                     }
                 }
             }

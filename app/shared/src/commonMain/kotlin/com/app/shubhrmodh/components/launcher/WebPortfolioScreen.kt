@@ -5,6 +5,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -32,7 +32,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -65,9 +64,6 @@ import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.data.ProjectItem
 import com.app.shubhrmodh.data.SkillCategory
 import com.app.shubhrmodh.prefersReducedMotion
-import org.jetbrains.compose.resources.painterResource
-import shubhrmodh.app.shared.generated.resources.Res
-import shubhrmodh.app.shared.generated.resources.zoro
 import com.app.shubhrmodh.theme.AndroidBorderDark
 import com.app.shubhrmodh.theme.AndroidCardDark
 import com.app.shubhrmodh.theme.AndroidCardInner
@@ -77,6 +73,9 @@ import com.app.shubhrmodh.theme.AndroidGreenDarkContainer
 import com.app.shubhrmodh.theme.AndroidSoftGrey
 import com.app.shubhrmodh.theme.AndroidTextWhite
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import shubhrmodh.app.shared.generated.resources.Res
+import shubhrmodh.app.shared.generated.resources.zoro
 
 private enum class PortfolioSection(val index: Int) {
     Hero(0), SelectedWork(1), Experience(2), Skills(3), AboutContact(4)
@@ -92,7 +91,13 @@ fun WebPortfolioScreen(
     val reduceMotion = remember { prefersReducedMotion() }
 
     var showCompanyModal by remember { mutableStateOf(false) }
-    var submittedCompanies by remember { mutableStateOf(listOf("Helsy Infotech", "Differenz System")) }
+    var submittedCompanies by remember {
+        mutableStateOf(
+            listOf(
+                "Helsy Infotech", "Differenz System"
+            )
+        )
+    }
 
     val goTo: (PortfolioSection) -> Unit = { section ->
         scope.launch {
@@ -101,13 +106,12 @@ fun WebPortfolioScreen(
         }
     }
     val projects = PortfolioRepository.projects
-    val activeSection = PortfolioSection.entries
-        .firstOrNull { it.index == state.firstVisibleItemIndex } ?: PortfolioSection.Hero
+    val activeSection =
+        PortfolioSection.entries.firstOrNull { it.index == state.firstVisibleItemIndex }
+            ?: PortfolioSection.Hero
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AndroidDarkBg)
+        modifier = Modifier.fillMaxSize().background(AndroidDarkBg)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             PortfolioNav(
@@ -125,8 +129,7 @@ fun WebPortfolioScreen(
                     HeroSection(
                         reduceMotion = reduceMotion,
                         onProjects = { goTo(PortfolioSection.SelectedWork) },
-                        onContact = { goTo(PortfolioSection.AboutContact) }
-                    )
+                        onContact = { goTo(PortfolioSection.AboutContact) })
                 }
                 item(key = "projects") {
                     SelectedWorkSection(
@@ -156,8 +159,7 @@ fun WebPortfolioScreen(
                         submittedCompanies = listOf(entry) + submittedCompanies
                     }
                 },
-                onDismiss = { showCompanyModal = false }
-            )
+                onDismiss = { showCompanyModal = false })
         }
     }
 }
@@ -170,18 +172,13 @@ private fun PortfolioNav(
     onToggleLauncherMode: (() -> Unit)? = null
 ) {
     BoxWithConstraints(
-        Modifier
-            .fillMaxWidth()
-            .background(AndroidDarkBg)
+        Modifier.fillMaxWidth().background(AndroidDarkBg)
     ) {
         val compact = maxWidth < 680.dp
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = if (compact) 20.dp else 56.dp,
-                    vertical = 18.dp
-                ),
+            modifier = Modifier.fillMaxWidth().padding(
+                horizontal = if (compact) 20.dp else 56.dp, vertical = 18.dp
+            ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -191,17 +188,13 @@ private fun PortfolioNav(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable(
-                        role = Role.Button,
-                        interactionSource = logoInteraction,
-                        indication = null,
-                        onClick = onHome
-                    )
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-                    .semantics { contentDescription = "Shubhr Modh home" }
-            ) {
+                modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable(
+                    role = Role.Button,
+                    interactionSource = logoInteraction,
+                    indication = null,
+                    onClick = onHome
+                ).padding(horizontal = 4.dp, vertical = 2.dp)
+                    .semantics { contentDescription = "Shubhr Modh home" }) {
                 Text(
                     text = "SHUBHR MODH",
                     color = if (isLogoHovered) AndroidGreenAccent else AndroidTextWhite,
@@ -212,17 +205,15 @@ private fun PortfolioNav(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(AndroidGreenDarkContainer)
-                        .border(1.dp, if (isLogoHovered) AndroidGreenAccent else Color.Transparent, RoundedCornerShape(20.dp))
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                    modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                        .background(AndroidGreenDarkContainer).border(
+                            1.dp,
+                            if (isLogoHovered) AndroidGreenAccent else Color.Transparent,
+                            RoundedCornerShape(20.dp)
+                        ).padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Box(
-                        Modifier
-                            .size(6.dp)
-                            .clip(CircleShape)
-                            .background(AndroidGreenAccent)
+                        Modifier.size(6.dp).clip(CircleShape).background(AndroidGreenAccent)
                     )
                     Text(
                         text = "Available for opportunities",
@@ -251,21 +242,17 @@ private fun PortfolioNav(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = label,
-                            modifier = Modifier
-                                .clickable(
-                                    role = Role.Button,
-                                    interactionSource = linkInteraction,
-                                    indication = null
-                                ) { onSelect(section) }
-                                .padding(vertical = 6.dp),
+                            modifier = Modifier.clickable(
+                                role = Role.Button,
+                                interactionSource = linkInteraction,
+                                indication = null
+                            ) { onSelect(section) }.padding(vertical = 6.dp),
                             color = if (isActive || isLinkHovered) AndroidGreenAccent else AndroidSoftGrey,
                             fontSize = 13.sp,
                             fontWeight = if (isActive || isLinkHovered) FontWeight.SemiBold else FontWeight.Medium
                         )
                         Box(
-                            Modifier
-                                .width(16.dp)
-                                .height(2.dp)
+                            Modifier.width(16.dp).height(2.dp)
                                 .background(if (isActive || isLinkHovered) AndroidGreenAccent else Color.Transparent)
                         )
                     }
@@ -276,17 +263,18 @@ private fun PortfolioNav(
                     val isSimHovered by simInteraction.collectIsHoveredAsState()
 
                     Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
                             .background(if (isSimHovered) AndroidGreenDarkContainer else AndroidCardDark)
-                            .border(1.dp, if (isSimHovered) AndroidGreenAccent else AndroidBorderDark, RoundedCornerShape(8.dp))
-                            .clickable(
+                            .border(
+                                1.dp,
+                                if (isSimHovered) AndroidGreenAccent else AndroidBorderDark,
+                                RoundedCornerShape(8.dp)
+                            ).clickable(
                                 role = Role.Button,
                                 interactionSource = simInteraction,
                                 indication = null,
                                 onClick = onToggleLauncherMode
-                            )
-                            .padding(horizontal = 12.dp, vertical = 7.dp),
+                            ).padding(horizontal = 12.dp, vertical = 7.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
@@ -307,10 +295,7 @@ private fun PortfolioNav(
             }
         }
         Box(
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(1.dp)
+            Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(1.dp)
                 .background(AndroidBorderDark)
         )
     }
@@ -318,9 +303,7 @@ private fun PortfolioNav(
 
 @Composable
 private fun CompanyConnectModal(
-    submittedCompanies: List<String>,
-    onAddCompany: (String, String) -> Unit,
-    onDismiss: () -> Unit
+    submittedCompanies: List<String>, onAddCompany: (String, String) -> Unit, onDismiss: () -> Unit
 ) {
     var activeTab by remember { mutableStateOf(0) }
     var companyNameText by remember { mutableStateOf("") }
@@ -328,33 +311,22 @@ private fun CompanyConnectModal(
     var successMsg by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0x99000000))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onDismiss
-            ),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize().background(Color(0x99000000)).clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onDismiss
+        ), contentAlignment = Alignment.Center
     ) {
         Card(
-            modifier = Modifier
-                .widthIn(max = 520.dp)
-                .fillMaxWidth(0.92f)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {}
-                )
-                .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp)),
+            modifier = Modifier.widthIn(max = 520.dp).fillMaxWidth(0.92f).clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = {}).border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(28.dp),
+                modifier = Modifier.fillMaxWidth().padding(28.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Row(
@@ -381,36 +353,28 @@ private fun CompanyConnectModal(
                         color = AndroidSoftGrey,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .clickable(
-                                role = Role.Button,
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = onDismiss
-                            )
-                            .padding(4.dp)
+                        modifier = Modifier.clickable(
+                            role = Role.Button,
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = onDismiss
+                        ).padding(4.dp)
                     )
                 }
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(AndroidCardInner)
-                        .padding(4.dp),
+                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+                        .background(AndroidCardInner).padding(4.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(6.dp))
+                        modifier = Modifier.weight(1f).clip(RoundedCornerShape(6.dp))
                             .background(if (activeTab == 0) AndroidCardDark else Color.Transparent)
                             .border(
                                 width = if (activeTab == 0) 1.dp else 0.dp,
                                 color = if (activeTab == 0) AndroidBorderDark else Color.Transparent,
                                 shape = RoundedCornerShape(6.dp)
-                            )
-                            .clickable(role = Role.Button) { activeTab = 0 }
+                            ).clickable(role = Role.Button) { activeTab = 0 }
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -423,16 +387,13 @@ private fun CompanyConnectModal(
                     }
 
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(6.dp))
+                        modifier = Modifier.weight(1f).clip(RoundedCornerShape(6.dp))
                             .background(if (activeTab == 1) AndroidCardDark else Color.Transparent)
                             .border(
                                 width = if (activeTab == 1) 1.dp else 0.dp,
                                 color = if (activeTab == 1) AndroidBorderDark else Color.Transparent,
                                 shape = RoundedCornerShape(6.dp)
-                            )
-                            .clickable(role = Role.Button) { activeTab = 1 }
+                            ).clickable(role = Role.Button) { activeTab = 1 }
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -456,12 +417,10 @@ private fun CompanyConnectModal(
                                 letterSpacing = 1.sp
                             )
                             StyledTextInput(
-                                value = companyNameText,
-                                onValueChange = {
+                                value = companyNameText, onValueChange = {
                                     companyNameText = it
                                     successMsg = ""
-                                },
-                                placeholder = "e.g. Google, Microsoft, Meta..."
+                                }, placeholder = "e.g. Google, Microsoft, Meta..."
                             )
                         }
 
@@ -497,16 +456,14 @@ private fun CompanyConnectModal(
                             horizontalArrangement = Arrangement.End
                         ) {
                             PrimaryButton(
-                                label = "Submit Company →",
-                                onClick = {
+                                label = "Submit Company", onClick = {
                                     if (companyNameText.isNotBlank()) {
                                         onAddCompany(companyNameText.trim(), noteText.trim())
                                         successMsg = "✓ Added '${companyNameText.trim()}' to list!"
                                         companyNameText = ""
                                         noteText = ""
                                     }
-                                }
-                            )
+                                })
                         }
                     }
                 } else {
@@ -528,19 +485,16 @@ private fun CompanyConnectModal(
                             )
                         } else {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(max = 240.dp),
+                                modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 submittedCompanies.forEachIndexed { idx, item ->
                                     Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth()
                                             .clip(RoundedCornerShape(8.dp))
-                                            .background(AndroidCardInner)
-                                            .border(1.dp, AndroidBorderDark, RoundedCornerShape(8.dp))
-                                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                                            .background(AndroidCardInner).border(
+                                                1.dp, AndroidBorderDark, RoundedCornerShape(8.dp)
+                                            ).padding(horizontal = 14.dp, vertical = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -592,61 +546,47 @@ private fun StyledTextInput(
         singleLine = singleLine,
         cursorBrush = SolidColor(AndroidGreenAccent),
         textStyle = TextStyle(
-            color = AndroidTextWhite,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
+            color = AndroidTextWhite, fontSize = 14.sp, fontWeight = FontWeight.Medium
         ),
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(AndroidCardInner)
-            .border(1.dp, AndroidBorderDark, RoundedCornerShape(8.dp))
+        modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+            .background(AndroidCardInner).border(1.dp, AndroidBorderDark, RoundedCornerShape(8.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp),
         decorationBox = { innerTextField ->
             Box {
                 if (value.isEmpty()) {
                     Text(
-                        text = placeholder,
-                        color = AndroidSoftGrey,
-                        fontSize = 14.sp
+                        text = placeholder, color = AndroidSoftGrey, fontSize = 14.sp
                     )
                 }
                 innerTextField()
             }
-        }
-    )
+        })
 }
 
 @Composable
 private fun HeroSection(
-    reduceMotion: Boolean,
-    onProjects: () -> Unit,
-    onContact: () -> Unit
+    reduceMotion: Boolean, onProjects: () -> Unit, onContact: () -> Unit
 ) {
     BoxWithConstraints(
-        Modifier
-            .fillMaxWidth()
-            .background(AndroidDarkBg)
+        Modifier.fillMaxWidth().background(AndroidDarkBg)
     ) {
         val compact = maxWidth < 768.dp
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = if (compact) 24.dp else 64.dp)
-                .padding(top = if (compact) 40.dp else 64.dp, bottom = if (compact) 48.dp else 72.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = if (compact) 24.dp else 64.dp)
+                .padding(
+                    top = if (compact) 40.dp else 64.dp, bottom = if (compact) 48.dp else 72.dp
+                )
         ) {
             AnimatedVisibility(
                 visible = true,
-                enter = if (reduceMotion) EnterTransition.None else fadeIn(tween(400)) + slideInVertically(tween(400)) { it / 16 }
-            ) {
+                enter = if (reduceMotion) EnterTransition.None else fadeIn(tween(400)) + slideInVertically(
+                    tween(400)
+                ) { it / 16 }) {
                 if (compact) {
                     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(280.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(AndroidCardDark)
+                            modifier = Modifier.fillMaxWidth().height(280.dp)
+                                .clip(RoundedCornerShape(16.dp)).background(AndroidCardDark)
                                 .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp))
                         ) {
                             Image(
@@ -685,11 +625,16 @@ private fun HeroSection(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.padding(top = 4.dp)
                         ) {
-                            val techStack = listOf("Kotlin", "Jetpack Compose", "Kotlin Multiplatform", "Navigation 3", "MVVM & Clean Architecture")
+                            val techStack = listOf(
+                                "Kotlin",
+                                "Jetpack Compose",
+                                "Kotlin Multiplatform",
+                                "Navigation 3",
+                                "MVVM & Clean Architecture"
+                            )
                             techStack.forEach { tech ->
                                 Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(6.dp))
+                                    modifier = Modifier.clip(RoundedCornerShape(6.dp))
                                         .background(AndroidCardDark)
                                         .border(1.dp, AndroidBorderDark, RoundedCornerShape(6.dp))
                                         .padding(horizontal = 12.dp, vertical = 6.dp)
@@ -711,13 +656,9 @@ private fun HeroSection(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             PrimaryButton(
-                                label = "Explore my work →",
-                                onClick = onProjects
+                                label = "Explore my work", onClick = onProjects
                             )
-                            SecondaryButton(
-                                label = "Get in touch ↗",
-                                onClick = onContact
-                            )
+                            SecondaryButton(onClick = onContact)
                         }
                     }
                 } else {
@@ -758,14 +699,19 @@ private fun HeroSection(
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.padding(top = 4.dp)
                             ) {
-                                val techStack = listOf("Kotlin", "Jetpack Compose", "Kotlin Multiplatform", "Navigation 3", "MVVM & Clean Architecture")
+                                val techStack = listOf(
+                                    "Kotlin",
+                                    "Jetpack Compose",
+                                    "Kotlin Multiplatform",
+                                    "Navigation 3",
+                                    "MVVM & Clean Architecture"
+                                )
                                 techStack.forEach { tech ->
                                     Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(6.dp))
-                                            .background(AndroidCardDark)
-                                            .border(1.dp, AndroidBorderDark, RoundedCornerShape(6.dp))
-                                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                                        modifier = Modifier.clip(RoundedCornerShape(6.dp))
+                                            .background(AndroidCardDark).border(
+                                                1.dp, AndroidBorderDark, RoundedCornerShape(6.dp)
+                                            ).padding(horizontal = 12.dp, vertical = 6.dp)
                                     ) {
                                         Text(
                                             text = tech,
@@ -784,21 +730,15 @@ private fun HeroSection(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 PrimaryButton(
-                                    label = "Explore my work →",
-                                    onClick = onProjects
+                                    label = "Explore my work", onClick = onProjects
                                 )
-                                SecondaryButton(
-                                    label = "Get in touch ↗",
-                                    onClick = onContact
-                                )
+                                SecondaryButton(onClick = onContact)
                             }
                         }
 
                         Box(
-                            modifier = Modifier
-                                .size(width = 380.dp, height = 440.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(AndroidCardDark)
+                            modifier = Modifier.size(width = 380.dp, height = 440.dp)
+                                .clip(RoundedCornerShape(16.dp)).background(AndroidCardDark)
                                 .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp))
                         ) {
                             Image(
@@ -813,60 +753,67 @@ private fun HeroSection(
             }
         }
         Box(
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(1.dp)
+            Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(1.dp)
                 .background(AndroidBorderDark)
         )
     }
 }
 
 @Composable
-private fun PrimaryButton(label: String, onClick: () -> Unit) {
+private fun PrimaryButton(
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = CustomIcons.ArrowRight,
+    onClick: () -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isHovered) Color(0xFF2ECC71) else AndroidGreenAccent)
-            .clickable(
+        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+            .background(if (isHovered) Color(0xFF2ECC71) else AndroidGreenAccent).clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick
-            )
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            ).padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = label,
-            color = Color(0xFF0B0F0D),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
+            text = label, color = Color(0xFF0B0F0D), fontSize = 14.sp, fontWeight = FontWeight.Bold
         )
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color(0xFF0B0F0D),
+                modifier = Modifier.size(15.dp)
+            )
+        }
     }
 }
 
 @Composable
-private fun SecondaryButton(label: String, onClick: () -> Unit) {
+private fun SecondaryButton(
+    label: String = "Get in touch",
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = CustomIcons.ArrowUpRight,
+    onClick: () -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isHovered) AndroidGreenDarkContainer else AndroidCardDark)
-            .border(1.dp, if (isHovered) AndroidGreenAccent else AndroidBorderDark, RoundedCornerShape(8.dp))
-            .clickable(
+        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+            .background(if (isHovered) AndroidGreenDarkContainer else AndroidCardDark).border(
+                1.dp,
+                if (isHovered) AndroidGreenAccent else AndroidBorderDark,
+                RoundedCornerShape(8.dp)
+            ).clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick
-            )
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            ).padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -876,29 +823,33 @@ private fun SecondaryButton(label: String, onClick: () -> Unit) {
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold
         )
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (isHovered) AndroidGreenAccent else AndroidTextWhite,
+                modifier = Modifier.size(15.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun SelectedWorkSection(
-    projects: List<ProjectItem>,
-    reduceMotion: Boolean,
-    openUri: (String) -> Unit
+    projects: List<ProjectItem>, reduceMotion: Boolean, openUri: (String) -> Unit
 ) {
     SectionContainer(
-        eyebrow = "01 — SELECTED WORK",
-        title = "A few things I've built."
+        eyebrow = "01 — SELECTED WORK", title = "A few things I've built."
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             projects.forEachIndexed { index, project ->
                 AnimatedVisibility(
                     visible = true,
-                    enter = if (reduceMotion) EnterTransition.None else fadeIn(tween(350)) + slideInVertically(tween(350)) { it / 20 }
-                ) {
+                    enter = if (reduceMotion) EnterTransition.None else fadeIn(tween(350)) + slideInVertically(
+                        tween(350)
+                    ) { it / 20 }) {
                     ProjectCard(
-                        project = project,
-                        index = index + 1,
-                        openUri = openUri
+                        project = project, index = index + 1, openUri = openUri
                     )
                 }
             }
@@ -906,31 +857,24 @@ private fun SelectedWorkSection(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProjectCard(
-    project: ProjectItem,
-    index: Int,
-    openUri: (String) -> Unit
+    project: ProjectItem, index: Int, openUri: (String) -> Unit
 ) {
     val hoverSource = remember { MutableInteractionSource() }
     val isHovered by hoverSource.collectIsHoveredAsState()
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                1.dp,
-                if (isHovered) AndroidGreenAccent else AndroidBorderDark,
-                RoundedCornerShape(12.dp)
-            ),
+        modifier = Modifier.fillMaxWidth().border(
+            1.dp,
+            if (isHovered) AndroidGreenAccent else AndroidBorderDark,
+            RoundedCornerShape(12.dp)
+        ),
         colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(28.dp),
+            modifier = Modifier.fillMaxWidth().padding(28.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
@@ -949,9 +893,7 @@ private fun ProjectCard(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "•",
-                        color = AndroidSoftGrey,
-                        fontSize = 13.sp
+                        text = "•", color = AndroidSoftGrey, fontSize = 13.sp
                     )
                     Text(
                         text = project.category,
@@ -969,27 +911,35 @@ private fun ProjectCard(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = 0.8.sp,
-                        modifier = Modifier
-                            .background(AndroidCardInner, RoundedCornerShape(4.dp))
+                        modifier = Modifier.background(AndroidCardInner, RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 } else if (project.githubUrl.isNotBlank()) {
                     val repoInteraction = remember { MutableInteractionSource() }
                     val isRepoHovered by repoInteraction.collectIsHoveredAsState()
 
-                    Text(
-                        text = "View Repository ↗",
-                        color = if (isRepoHovered) Color(0xFF2ECC71) else AndroidGreenAccent,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .clickable(
-                                role = Role.Button,
-                                interactionSource = repoInteraction,
-                                indication = null
-                            ) { openUri(project.githubUrl) }
-                            .padding(vertical = 4.dp)
-                    )
+                    Row(
+                        modifier = Modifier.clickable(
+                            role = Role.Button,
+                            interactionSource = repoInteraction,
+                            indication = null
+                        ) { openUri(project.githubUrl) }.padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "View Repository",
+                            color = if (isRepoHovered) Color(0xFF2ECC71) else AndroidGreenAccent,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Icon(
+                            imageVector = CustomIcons.ArrowUpRight,
+                            contentDescription = null,
+                            tint = if (isRepoHovered) Color(0xFF2ECC71) else AndroidGreenAccent,
+                            modifier = Modifier.size(13.dp)
+                        )
+                    }
                 }
             }
 
@@ -1016,12 +966,9 @@ private fun ProjectCard(
             )
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
+                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
                     .background(AndroidCardInner)
-                    .border(1.dp, AndroidBorderDark, RoundedCornerShape(8.dp))
-                    .padding(16.dp),
+                    .border(1.dp, AndroidBorderDark, RoundedCornerShape(8.dp)).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (project.problem.isNotBlank()) {
@@ -1031,7 +978,9 @@ private fun ProjectCard(
                     StructuredField(label = "CONTRIBUTION", content = project.contribution)
                 }
                 if (project.outcome.isNotBlank()) {
-                    StructuredField(label = "OUTCOME", content = project.outcome, isHighlight = true)
+                    StructuredField(
+                        label = "OUTCOME", content = project.outcome, isHighlight = true
+                    )
                 }
             }
 
@@ -1041,8 +990,7 @@ private fun ProjectCard(
             ) {
                 project.tags.forEach { tag ->
                     Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
+                        modifier = Modifier.clip(RoundedCornerShape(4.dp))
                             .background(AndroidGreenDarkContainer)
                             .padding(horizontal = 10.dp, vertical = 4.dp)
                     ) {
@@ -1070,10 +1018,7 @@ private fun StructuredField(label: String, content: String, isHighlight: Boolean
             letterSpacing = 1.sp
         )
         Text(
-            text = content,
-            color = AndroidTextWhite,
-            fontSize = 13.sp,
-            lineHeight = 19.sp
+            text = content, color = AndroidTextWhite, fontSize = 13.sp, lineHeight = 19.sp
         )
     }
 }
@@ -1082,8 +1027,7 @@ private fun StructuredField(label: String, content: String, isHighlight: Boolean
 private fun ExperienceSection() {
     val experiences = PortfolioRepository.experiences
     SectionContainer(
-        eyebrow = "02 — EXPERIENCE",
-        title = "Where I've worked and what I've contributed."
+        eyebrow = "02 — EXPERIENCE", title = "Where I've worked and what I've contributed."
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
             experiences.forEach { exp ->
@@ -1093,20 +1037,16 @@ private fun ExperienceSection() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExperienceCard(item: ExperienceItem) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .border(1.dp, AndroidBorderDark, RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(
@@ -1134,8 +1074,7 @@ private fun ExperienceCard(item: ExperienceItem) {
                     color = AndroidGreenAccent,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
+                    modifier = Modifier.clip(RoundedCornerShape(6.dp))
                         .background(AndroidGreenDarkContainer)
                         .padding(horizontal = 10.dp, vertical = 5.dp)
                 )
@@ -1165,8 +1104,7 @@ private fun ExperienceCard(item: ExperienceItem) {
             ) {
                 item.tags.forEach { tag ->
                     Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
+                        modifier = Modifier.clip(RoundedCornerShape(4.dp))
                             .background(AndroidCardInner)
                             .border(1.dp, AndroidBorderDark, RoundedCornerShape(4.dp))
                             .padding(horizontal = 9.dp, vertical = 4.dp)
@@ -1188,8 +1126,7 @@ private fun ExperienceCard(item: ExperienceItem) {
 private fun TechnicalSkillsSection() {
     val categories = PortfolioRepository.skillCategories
     SectionContainer(
-        eyebrow = "03 — TECHNICAL SKILLS",
-        title = "Tools I work with."
+        eyebrow = "03 — TECHNICAL SKILLS", title = "Tools I work with."
     ) {
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val compact = maxWidth < 680.dp
@@ -1208,8 +1145,7 @@ private fun TechnicalSkillsSection() {
                         ) {
                             pair.forEach { category ->
                                 SkillCategoryCard(
-                                    category = category,
-                                    modifier = Modifier.weight(1f)
+                                    category = category, modifier = Modifier.weight(1f)
                                 )
                             }
                             if (pair.size == 1) {
@@ -1223,23 +1159,18 @@ private fun TechnicalSkillsSection() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SkillCategoryCard(
-    category: SkillCategory,
-    modifier: Modifier = Modifier
+    category: SkillCategory, modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .border(1.dp, AndroidBorderDark, RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
+            modifier = Modifier.fillMaxWidth().padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
@@ -1254,8 +1185,7 @@ private fun SkillCategoryCard(
             ) {
                 category.skills.forEach { skill ->
                     Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                        modifier = Modifier.clip(RoundedCornerShape(6.dp))
                             .background(AndroidCardInner)
                             .border(1.dp, AndroidBorderDark, RoundedCornerShape(6.dp))
                             .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -1280,8 +1210,7 @@ private fun AboutAndContactSection(openUri: (String) -> Unit) {
     val achievement = PortfolioRepository.achievements.first()
 
     SectionContainer(
-        eyebrow = "04 — ABOUT & CONTACT",
-        title = "A little more about me & Get in touch."
+        eyebrow = "04 — ABOUT & CONTACT", title = "A little more about me & Get in touch."
     ) {
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val compact = maxWidth < 768.dp
@@ -1303,15 +1232,10 @@ private fun AboutAndContactSection(openUri: (String) -> Unit) {
 
         Spacer(Modifier.height(48.dp))
         Box(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(AndroidBorderDark)
+            Modifier.fillMaxWidth().height(1.dp).background(AndroidBorderDark)
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
@@ -1337,16 +1261,13 @@ private fun AboutCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .border(1.dp, AndroidBorderDark, RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
@@ -1364,10 +1285,7 @@ private fun AboutCard(
             )
 
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(AndroidBorderDark)
+                Modifier.fillMaxWidth().height(1.dp).background(AndroidBorderDark)
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -1397,10 +1315,7 @@ private fun AboutCard(
             }
 
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(AndroidBorderDark)
+                Modifier.fillMaxWidth().height(1.dp).background(AndroidBorderDark)
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -1428,7 +1343,6 @@ private fun AboutCard(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ContactCard(
     contact: com.app.shubhrmodh.data.ContactInfo,
@@ -1436,16 +1350,13 @@ private fun ContactCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .border(1.dp, AndroidBorderDark, RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
@@ -1466,17 +1377,14 @@ private fun ContactCard(
             val isMailHovered by mailInteraction.collectIsHoveredAsState()
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(AndroidGreenDarkContainer)
-                    .border(1.dp, if (isMailHovered) AndroidGreenAccent else Color.Transparent, RoundedCornerShape(8.dp))
-                    .clickable(
-                        role = Role.Button,
-                        interactionSource = mailInteraction,
-                        indication = null
-                    ) { openUri("mailto:${contact.email}") }
-                    .padding(14.dp),
+                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+                    .background(AndroidGreenDarkContainer).border(
+                        1.dp,
+                        if (isMailHovered) AndroidGreenAccent else Color.Transparent,
+                        RoundedCornerShape(8.dp)
+                    ).clickable(
+                        role = Role.Button, interactionSource = mailInteraction, indication = null
+                    ) { openUri("mailto:${contact.email}") }.padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -1495,7 +1403,23 @@ private fun ContactCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Text("Mail ↗", color = AndroidGreenAccent, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "Mail",
+                        color = AndroidGreenAccent,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Icon(
+                        imageVector = CustomIcons.ArrowUpRight,
+                        contentDescription = null,
+                        tint = AndroidGreenAccent,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
             }
 
             Text(
@@ -1524,16 +1448,17 @@ private fun ContactCard(
                     val isPillHovered by linkPillInteraction.collectIsHoveredAsState()
 
                     Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                        modifier = Modifier.clip(RoundedCornerShape(6.dp))
                             .background(if (isPillHovered) AndroidGreenDarkContainer else AndroidCardInner)
-                            .border(1.dp, if (isPillHovered) AndroidGreenAccent else AndroidBorderDark, RoundedCornerShape(6.dp))
-                            .clickable(
+                            .border(
+                                1.dp,
+                                if (isPillHovered) AndroidGreenAccent else AndroidBorderDark,
+                                RoundedCornerShape(6.dp)
+                            ).clickable(
                                 role = Role.Button,
                                 interactionSource = linkPillInteraction,
                                 indication = null
-                            ) { openUri(url) }
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                            ) { openUri(url) }.padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
@@ -1543,10 +1468,11 @@ private fun ContactCard(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium
                         )
-                        Text(
-                            text = "↗",
-                            color = AndroidGreenAccent,
-                            fontSize = 12.sp
+                        Icon(
+                            imageVector = CustomIcons.ArrowUpRight,
+                            contentDescription = null,
+                            tint = AndroidGreenAccent,
+                            modifier = Modifier.size(13.dp)
                         )
                     }
                 }
@@ -1557,21 +1483,17 @@ private fun ContactCard(
 
 @Composable
 private fun SectionContainer(
-    eyebrow: String,
-    title: String,
-    content: @Composable ColumnScope.() -> Unit
+    eyebrow: String, title: String, content: @Composable ColumnScope.() -> Unit
 ) {
     BoxWithConstraints(
-        Modifier
-            .fillMaxWidth()
-            .background(AndroidDarkBg)
+        Modifier.fillMaxWidth().background(AndroidDarkBg)
     ) {
         val compact = maxWidth < 768.dp
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = if (compact) 24.dp else 64.dp)
-                .padding(top = if (compact) 48.dp else 64.dp, bottom = if (compact) 48.dp else 64.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = if (compact) 24.dp else 64.dp)
+                .padding(
+                    top = if (compact) 48.dp else 64.dp, bottom = if (compact) 48.dp else 64.dp
+                )
         ) {
             Text(
                 text = eyebrow,
