@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.ai.AiActionTarget
 import com.app.shubhrmodh.components.CustomIcons
 import com.app.shubhrmodh.components.ai.PortfolioAiModal
+import com.app.shubhrmodh.components.motion.hoverScale
+import com.app.shubhrmodh.components.motion.pressScale
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.navigation.NavKey
 import com.app.shubhrmodh.theme.BorderWhite
@@ -428,11 +430,21 @@ data class LauncherAppItem(
 
 @Composable
 fun AndroidAppIcon(app: LauncherAppItem) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .width(68.dp)
-            .clickable(role = Role.Button, onClick = app.onClick)
+            .hoverScale(isHovered, scale = 1.06f)
+            .pressScale(interactionSource)
+            .clickable(
+                role = Role.Button,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = app.onClick
+            )
             .padding(vertical = 4.dp)
             .semantics { contentDescription = "Open ${app.name}" }
     ) {
@@ -440,7 +452,7 @@ fun AndroidAppIcon(app: LauncherAppItem) {
             modifier = Modifier
                 .size(54.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(White15)
+                .background(if (isHovered) Color(0x33FFFFFF) else White15)
                 .border(1.dp, BorderWhite, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {

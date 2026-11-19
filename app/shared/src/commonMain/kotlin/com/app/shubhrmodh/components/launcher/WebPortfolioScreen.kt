@@ -45,10 +45,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.SolidColor
+import com.app.shubhrmodh.components.motion.createAnimatedGreenMatrix
+import com.app.shubhrmodh.components.motion.hoverScale
+import com.app.shubhrmodh.components.motion.pressScale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
@@ -536,15 +540,6 @@ private fun StyledTextInput(
         })
 }
 
-private val GreenArtworkMatrix = ColorMatrix(
-    floatArrayOf(
-        0.2392f / 3f, 0.2392f / 3f, 0.2392f / 3f, 0f, 0f,
-        0.8627f / 3f, 0.8627f / 3f, 0.8627f / 3f, 0f, 0f,
-        0.5176f / 3f, 0.5176f / 3f, 0.5176f / 3f, 0f, 0f,
-        0f, 0f, 0f, 1f, 0f
-    )
-)
-
 @Composable
 private fun HeroSection(
     reduceMotion: Boolean, onProjects: () -> Unit, onContact: () -> Unit
@@ -567,14 +562,25 @@ private fun HeroSection(
                 if (compact) {
                     val compactZoroInteraction = remember { MutableInteractionSource() }
                     val isCompactZoroHovered by compactZoroInteraction.collectIsHoveredAsState()
+                    val compactZoroProgress by animateFloatAsState(
+                        targetValue = if (isCompactZoroHovered) 1f else 0f,
+                        animationSpec = tween(durationMillis = 250),
+                        label = "CompactZoroProgress"
+                    )
+                    val compactZoroBorderColor by animateColorAsState(
+                        targetValue = if (isCompactZoroHovered) AndroidGreenAccent else AndroidBorderDark,
+                        animationSpec = tween(durationMillis = 250),
+                        label = "CompactZoroBorder"
+                    )
 
                     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         Box(
                             modifier = Modifier.fillMaxWidth().height(280.dp)
+                                .hoverScale(isCompactZoroHovered, scale = 1.015f, reduceMotion = reduceMotion)
                                 .clip(RoundedCornerShape(16.dp)).background(AndroidCardDark)
                                 .border(
                                     1.dp,
-                                    if (isCompactZoroHovered) AndroidGreenAccent else AndroidBorderDark,
+                                    compactZoroBorderColor,
                                     RoundedCornerShape(16.dp)
                                 )
                                 .clickable(
@@ -588,7 +594,7 @@ private fun HeroSection(
                                 contentDescription = "Zoro Artwork",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
-                                colorFilter = if (isCompactZoroHovered) ColorFilter.colorMatrix(GreenArtworkMatrix) else null
+                                colorFilter = createAnimatedGreenMatrix(compactZoroProgress)
                             )
                         }
 
@@ -659,6 +665,16 @@ private fun HeroSection(
                 } else {
                     val desktopZoroInteraction = remember { MutableInteractionSource() }
                     val isDesktopZoroHovered by desktopZoroInteraction.collectIsHoveredAsState()
+                    val desktopZoroProgress by animateFloatAsState(
+                        targetValue = if (isDesktopZoroHovered) 1f else 0f,
+                        animationSpec = tween(durationMillis = 250),
+                        label = "DesktopZoroProgress"
+                    )
+                    val desktopZoroBorderColor by animateColorAsState(
+                        targetValue = if (isDesktopZoroHovered) AndroidGreenAccent else AndroidBorderDark,
+                        animationSpec = tween(durationMillis = 250),
+                        label = "DesktopZoroBorder"
+                    )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -736,10 +752,11 @@ private fun HeroSection(
 
                         Box(
                             modifier = Modifier.size(width = 380.dp, height = 440.dp)
+                                .hoverScale(isDesktopZoroHovered, scale = 1.015f, reduceMotion = reduceMotion)
                                 .clip(RoundedCornerShape(16.dp)).background(AndroidCardDark)
                                 .border(
                                     1.dp,
-                                    if (isDesktopZoroHovered) AndroidGreenAccent else AndroidBorderDark,
+                                    desktopZoroBorderColor,
                                     RoundedCornerShape(16.dp)
                                 )
                                 .clickable(
@@ -753,7 +770,7 @@ private fun HeroSection(
                                 contentDescription = "Zoro Artwork",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
-                                colorFilter = if (isDesktopZoroHovered) ColorFilter.colorMatrix(GreenArtworkMatrix) else null
+                                colorFilter = createAnimatedGreenMatrix(desktopZoroProgress)
                             )
                         }
                     }
@@ -775,10 +792,19 @@ private fun PrimaryButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
+    val bgColor by animateColorAsState(
+        targetValue = if (isHovered) Color(0xFF2ECC71) else AndroidGreenAccent,
+        animationSpec = tween(durationMillis = 180),
+        label = "PrimaryBtnBg"
+    )
 
     Row(
-        modifier = Modifier.clip(RoundedCornerShape(8.dp))
-            .background(if (isHovered) Color(0xFF2ECC71) else AndroidGreenAccent).clickable(
+        modifier = Modifier
+            .hoverScale(isHovered, scale = 1.03f)
+            .pressScale(interactionSource)
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
                 indication = null,
@@ -809,14 +835,30 @@ private fun SecondaryButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
+    val bgColor by animateColorAsState(
+        targetValue = if (isHovered) AndroidGreenDarkContainer else AndroidCardDark,
+        animationSpec = tween(durationMillis = 180),
+        label = "SecondaryBtnBg"
+    )
+    val borderColor by animateColorAsState(
+        targetValue = if (isHovered) AndroidGreenAccent else AndroidBorderDark,
+        animationSpec = tween(durationMillis = 180),
+        label = "SecondaryBtnBorder"
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (isHovered) AndroidGreenAccent else AndroidTextWhite,
+        animationSpec = tween(durationMillis = 180),
+        label = "SecondaryBtnText"
+    )
 
     Row(
-        modifier = Modifier.clip(RoundedCornerShape(8.dp))
-            .background(if (isHovered) AndroidGreenDarkContainer else AndroidCardDark).border(
-                1.dp,
-                if (isHovered) AndroidGreenAccent else AndroidBorderDark,
-                RoundedCornerShape(8.dp)
-            ).clickable(
+        modifier = Modifier
+            .hoverScale(isHovered, scale = 1.03f)
+            .pressScale(interactionSource)
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
                 indication = null,
@@ -827,7 +869,7 @@ private fun SecondaryButton(
     ) {
         Text(
             text = label,
-            color = if (isHovered) AndroidGreenAccent else AndroidTextWhite,
+            color = contentColor,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -835,7 +877,7 @@ private fun SecondaryButton(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isHovered) AndroidGreenAccent else AndroidTextWhite,
+                tint = contentColor,
                 modifier = Modifier.size(15.dp)
             )
         }
