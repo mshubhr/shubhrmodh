@@ -2,6 +2,8 @@ package com.app.shubhrmodh.components.launcher
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -45,14 +47,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.SolidColor
-import com.app.shubhrmodh.components.motion.createAnimatedGreenMatrix
-import com.app.shubhrmodh.components.motion.hoverScale
-import com.app.shubhrmodh.components.motion.pressScale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
@@ -66,6 +62,9 @@ import androidx.compose.ui.unit.sp
 import com.app.shubhrmodh.ai.AiActionTarget
 import com.app.shubhrmodh.components.CustomIcons
 import com.app.shubhrmodh.components.ai.PortfolioAiModal
+import com.app.shubhrmodh.components.motion.createAnimatedGreenMatrix
+import com.app.shubhrmodh.components.motion.hoverScale
+import com.app.shubhrmodh.components.motion.pressScale
 import com.app.shubhrmodh.data.ExperienceItem
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.data.ProjectItem
@@ -152,7 +151,6 @@ fun WebPortfolioScreen(
             }
         }
 
-        // Floating Action Button for AI Assistant
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -382,46 +380,80 @@ private fun CompanyConnectModal(
     onDismiss: () -> Unit
 ) {
     var companyNameText by remember { mutableStateOf("") }
+    var contactPersonText by remember { mutableStateOf("") }
     var noteText by remember { mutableStateOf("") }
+    var errorMsg by remember { mutableStateOf("") }
     var successMsg by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier.fillMaxSize().background(Color(0x99000000)).clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = onDismiss
-        ), contentAlignment = Alignment.Center
-    ) {
-        Card(
-            modifier = Modifier.widthIn(max = 520.dp).fillMaxWidth(0.92f).clickable(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0x99000000))
+            .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = {}
-            ).border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp)),
+                onClick = onDismiss
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .widthIn(max = 520.dp)
+                .fillMaxWidth(0.92f)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {}
+                )
+                .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(28.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(28.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
+                // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = "Company & Recruiter Connect",
-                            color = AndroidTextWhite,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Interested in hiring or collaborating? Send your company details directly to Shubhr.",
-                            color = AndroidSoftGrey,
-                            fontSize = 13.sp
-                        )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(AndroidGreenDarkContainer)
+                                .border(1.dp, AndroidGreenAccent, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = CustomIcons.Work,
+                                contentDescription = null,
+                                tint = AndroidGreenAccent,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = "Recruiter & Company Connect",
+                                color = AndroidTextWhite,
+                                fontSize = 19.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Send your opportunity details privately to Shubhr.",
+                                color = AndroidSoftGrey,
+                                fontSize = 13.sp
+                            )
+                        }
                     }
 
                     Text(
@@ -429,19 +461,29 @@ private fun CompanyConnectModal(
                         color = AndroidSoftGrey,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable(
-                            role = Role.Button,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onDismiss
-                        ).padding(4.dp)
+                        modifier = Modifier
+                            .clickable(
+                                role = Role.Button,
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = onDismiss
+                            )
+                            .padding(6.dp)
                     )
                 }
 
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(AndroidBorderDark)
+                )
+
+                // Form Inputs
                 Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "COMPANY NAME *",
+                            text = "COMPANY / ORGANIZATION NAME *",
                             color = AndroidGreenAccent,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
@@ -451,15 +493,35 @@ private fun CompanyConnectModal(
                             value = companyNameText,
                             onValueChange = {
                                 companyNameText = it
+                                errorMsg = ""
                                 successMsg = ""
                             },
-                            placeholder = "e.g. Google, Microsoft, Meta..."
+                            placeholder = "e.g. Google, Microsoft, Tech Startup..."
                         )
                     }
 
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "EMAIL / ROLE NOTE (OPTIONAL)",
+                            text = "YOUR NAME & EMAIL *",
+                            color = AndroidGreenAccent,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+                        StyledTextInput(
+                            value = contactPersonText,
+                            onValueChange = {
+                                contactPersonText = it
+                                errorMsg = ""
+                                successMsg = ""
+                            },
+                            placeholder = "e.g. Jane Doe — recruiter@company.com"
+                        )
+                    }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = "ROLE & OPPORTUNITY DETAILS (OPTIONAL)",
                             color = AndroidSoftGrey,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
@@ -469,36 +531,57 @@ private fun CompanyConnectModal(
                             value = noteText,
                             onValueChange = {
                                 noteText = it
+                                errorMsg = ""
                                 successMsg = ""
                             },
-                            placeholder = "e.g. recruiter@company.com — Senior Android position"
+                            placeholder = "e.g. Senior Android / KMP Engineer position (Remote)"
                         )
                     }
 
-                    if (successMsg.isNotBlank()) {
+                    if (errorMsg.isNotBlank()) {
                         Text(
-                            text = successMsg,
-                            color = AndroidGreenAccent,
+                            text = errorMsg,
+                            color = Color(0xFFE74C3C),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
 
+                    if (successMsg.isNotBlank()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(AndroidGreenDarkContainer)
+                                .border(1.dp, AndroidGreenAccent, RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        ) {
+                            Text(
+                                text = successMsg,
+                                color = AndroidGreenAccent,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         PrimaryButton(
-                            label = "Send Direct Inquiry",
+                            label = "Send Direct Inquiry ✨",
                             onClick = {
-                                if (companyNameText.isNotBlank()) {
+                                if (companyNameText.isBlank() || contactPersonText.isBlank()) {
+                                    errorMsg = "⚠️ Please fill in both Company Name and Your Name/Email."
+                                } else {
                                     val subject = "Recruiter Interest: ${companyNameText.trim()}"
-                                    val body = "Company: ${companyNameText.trim()}\nDetails: ${noteText.trim()}"
+                                    val body = "Company: ${companyNameText.trim()}\nContact: ${contactPersonText.trim()}\nDetails: ${noteText.trim()}\n\nSent via Shubhr Modh Portfolio."
                                     val mailUrl = "mailto:${PortfolioRepository.contact.email}?subject=${subject.replace(" ", "%20")}&body=${body.replace(" ", "%20").replace("\n", "%0A")}"
                                     openUri(mailUrl)
-                                    successMsg = "✓ Inquiry prepared! Opening mail client to send directly to Shubhr."
-                                    companyNameText = ""
-                                    noteText = ""
+                                    successMsg = "✓ Inquiry prepared! Opening your mail client to send privately to Shubhr."
+                                    errorMsg = ""
                                 }
                             }
                         )
