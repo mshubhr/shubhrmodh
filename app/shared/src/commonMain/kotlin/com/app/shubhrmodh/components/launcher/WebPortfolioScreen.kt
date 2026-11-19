@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -91,13 +90,6 @@ fun WebPortfolioScreen(
     val reduceMotion = remember { prefersReducedMotion() }
 
     var showCompanyModal by remember { mutableStateOf(false) }
-    var submittedCompanies by remember {
-        mutableStateOf(
-            listOf(
-                "Helsy Infotech", "Differenz System"
-            )
-        )
-    }
 
     val goTo: (PortfolioSection) -> Unit = { section ->
         scope.launch {
@@ -152,14 +144,9 @@ fun WebPortfolioScreen(
 
         if (showCompanyModal) {
             CompanyConnectModal(
-                submittedCompanies = submittedCompanies,
-                onAddCompany = { newCompany, note ->
-                    if (newCompany.isNotBlank()) {
-                        val entry = if (note.isNotBlank()) "$newCompany — $note" else newCompany
-                        submittedCompanies = listOf(entry) + submittedCompanies
-                    }
-                },
-                onDismiss = { showCompanyModal = false })
+                openUri = uriHandler::openUri,
+                onDismiss = { showCompanyModal = false }
+            )
         }
     }
 }
@@ -303,9 +290,9 @@ private fun PortfolioNav(
 
 @Composable
 private fun CompanyConnectModal(
-    submittedCompanies: List<String>, onAddCompany: (String, String) -> Unit, onDismiss: () -> Unit
+    openUri: (String) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    var activeTab by remember { mutableStateOf(0) }
     var companyNameText by remember { mutableStateOf("") }
     var noteText by remember { mutableStateOf("") }
     var successMsg by remember { mutableStateOf("") }
@@ -321,7 +308,8 @@ private fun CompanyConnectModal(
             modifier = Modifier.widthIn(max = 520.dp).fillMaxWidth(0.92f).clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = {}).border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp)),
+                onClick = {}
+            ).border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(containerColor = AndroidCardDark),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -342,7 +330,7 @@ private fun CompanyConnectModal(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Add your company to let Shubhr know you're interested.",
+                            text = "Interested in hiring or collaborating? Send your company details directly to Shubhr.",
                             color = AndroidSoftGrey,
                             fontSize = 13.sp
                         )
@@ -362,169 +350,70 @@ private fun CompanyConnectModal(
                     )
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
-                        .background(AndroidCardInner).padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Box(
-                        modifier = Modifier.weight(1f).clip(RoundedCornerShape(6.dp))
-                            .background(if (activeTab == 0) AndroidCardDark else Color.Transparent)
-                            .border(
-                                width = if (activeTab == 0) 1.dp else 0.dp,
-                                color = if (activeTab == 0) AndroidBorderDark else Color.Transparent,
-                                shape = RoundedCornerShape(6.dp)
-                            ).clickable(role = Role.Button) { activeTab = 0 }
-                            .padding(vertical = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "✚ Add Company",
-                            color = if (activeTab == 0) AndroidGreenAccent else AndroidSoftGrey,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
+                            text = "COMPANY NAME *",
+                            color = AndroidGreenAccent,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+                        StyledTextInput(
+                            value = companyNameText,
+                            onValueChange = {
+                                companyNameText = it
+                                successMsg = ""
+                            },
+                            placeholder = "e.g. Google, Microsoft, Meta..."
                         )
                     }
 
-                    Box(
-                        modifier = Modifier.weight(1f).clip(RoundedCornerShape(6.dp))
-                            .background(if (activeTab == 1) AndroidCardDark else Color.Transparent)
-                            .border(
-                                width = if (activeTab == 1) 1.dp else 0.dp,
-                                color = if (activeTab == 1) AndroidBorderDark else Color.Transparent,
-                                shape = RoundedCornerShape(6.dp)
-                            ).clickable(role = Role.Button) { activeTab = 1 }
-                            .padding(vertical = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "📋 View List (${submittedCompanies.size})",
-                            color = if (activeTab == 1) AndroidGreenAccent else AndroidSoftGrey,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-
-                if (activeTab == 0) {
-                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Text(
-                                text = "COMPANY NAME *",
-                                color = AndroidGreenAccent,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
-                            )
-                            StyledTextInput(
-                                value = companyNameText, onValueChange = {
-                                    companyNameText = it
-                                    successMsg = ""
-                                }, placeholder = "e.g. Google, Microsoft, Meta..."
-                            )
-                        }
-
-                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Text(
-                                text = "EMAIL / ROLE NOTE (OPTIONAL)",
-                                color = AndroidSoftGrey,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
-                            )
-                            StyledTextInput(
-                                value = noteText,
-                                onValueChange = {
-                                    noteText = it
-                                    successMsg = ""
-                                },
-                                placeholder = "e.g. recruiter@company.com - Senior Android position"
-                            )
-                        }
-
-                        if (successMsg.isNotBlank()) {
-                            Text(
-                                text = successMsg,
-                                color = AndroidGreenAccent,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            PrimaryButton(
-                                label = "Submit Company", onClick = {
-                                    if (companyNameText.isNotBlank()) {
-                                        onAddCompany(companyNameText.trim(), noteText.trim())
-                                        successMsg = "✓ Added '${companyNameText.trim()}' to list!"
-                                        companyNameText = ""
-                                        noteText = ""
-                                    }
-                                })
-                        }
-                    }
-                } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(
-                            text = "COMPANIES ADDED TO LIST",
+                            text = "EMAIL / ROLE NOTE (OPTIONAL)",
                             color = AndroidSoftGrey,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp
                         )
+                        StyledTextInput(
+                            value = noteText,
+                            onValueChange = {
+                                noteText = it
+                                successMsg = ""
+                            },
+                            placeholder = "e.g. recruiter@company.com — Senior Android position"
+                        )
+                    }
 
-                        if (submittedCompanies.isEmpty()) {
-                            Text(
-                                text = "No companies added yet. Be the first to submit!",
-                                color = AndroidSoftGrey,
-                                fontSize = 14.sp,
-                                modifier = Modifier.padding(vertical = 12.dp)
-                            )
-                        } else {
-                            Column(
-                                modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                submittedCompanies.forEachIndexed { idx, item ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth()
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(AndroidCardInner).border(
-                                                1.dp, AndroidBorderDark, RoundedCornerShape(8.dp)
-                                            ).padding(horizontal = 14.dp, vertical = 10.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = "#${idx + 1}",
-                                                color = AndroidGreenAccent,
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                            Text(
-                                                text = item,
-                                                color = AndroidTextWhite,
-                                                fontSize = 14.sp,
-                                                fontWeight = FontWeight.SemiBold
-                                            )
-                                        }
-                                        Text(
-                                            text = "Saved",
-                                            color = AndroidSoftGrey,
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Medium
-                                        )
-                                    }
+                    if (successMsg.isNotBlank()) {
+                        Text(
+                            text = successMsg,
+                            color = AndroidGreenAccent,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        PrimaryButton(
+                            label = "Send Direct Inquiry",
+                            onClick = {
+                                if (companyNameText.isNotBlank()) {
+                                    val subject = "Recruiter Interest: ${companyNameText.trim()}"
+                                    val body = "Company: ${companyNameText.trim()}\nDetails: ${noteText.trim()}"
+                                    val mailUrl = "mailto:${PortfolioRepository.contact.email}?subject=${subject.replace(" ", "%20")}&body=${body.replace(" ", "%20").replace("\n", "%0A")}"
+                                    openUri(mailUrl)
+                                    successMsg = "✓ Inquiry prepared! Opening mail client to send directly to Shubhr."
+                                    companyNameText = ""
+                                    noteText = ""
                                 }
                             }
-                        }
+                        )
                     }
                 }
             }
