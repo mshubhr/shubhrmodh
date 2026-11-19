@@ -57,7 +57,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.shubhrmodh.ai.AiActionTarget
 import com.app.shubhrmodh.components.CustomIcons
+import com.app.shubhrmodh.components.ai.PortfolioAiModal
 import com.app.shubhrmodh.data.ExperienceItem
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.data.ProjectItem
@@ -90,6 +92,7 @@ fun WebPortfolioScreen(
     val reduceMotion = remember { prefersReducedMotion() }
 
     var showCompanyModal by remember { mutableStateOf(false) }
+    var showAiModal by remember { mutableStateOf(false) }
 
     val goTo: (PortfolioSection) -> Unit = { section ->
         scope.launch {
@@ -110,6 +113,7 @@ fun WebPortfolioScreen(
                 activeSection = activeSection,
                 onSelect = goTo,
                 onHome = { showCompanyModal = true },
+                onOpenAi = { showAiModal = true },
                 onToggleLauncherMode = onToggleLauncherMode
             )
             LazyColumn(
@@ -142,10 +146,54 @@ fun WebPortfolioScreen(
             }
         }
 
+        // Floating Action Button for AI Assistant
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(AndroidGreenDarkContainer)
+                .border(1.dp, AndroidGreenAccent, RoundedCornerShape(24.dp))
+                .clickable { showAiModal = true }
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = CustomIcons.Sparkles,
+                    contentDescription = null,
+                    tint = AndroidGreenAccent,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = "Ask AI Assistant ✨",
+                    color = AndroidGreenAccent,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
         if (showCompanyModal) {
             CompanyConnectModal(
                 openUri = uriHandler::openUri,
                 onDismiss = { showCompanyModal = false }
+            )
+        }
+
+        if (showAiModal) {
+            PortfolioAiModal(
+                onActionSelected = { target ->
+                    when (target) {
+                        AiActionTarget.Projects -> goTo(PortfolioSection.SelectedWork)
+                        AiActionTarget.Experience -> goTo(PortfolioSection.Experience)
+                        AiActionTarget.Skills -> goTo(PortfolioSection.Skills)
+                        AiActionTarget.Contact -> goTo(PortfolioSection.AboutContact)
+                    }
+                },
+                onDismiss = { showAiModal = false }
             )
         }
     }
@@ -156,6 +204,7 @@ private fun PortfolioNav(
     activeSection: PortfolioSection,
     onSelect: (PortfolioSection) -> Unit,
     onHome: () -> Unit,
+    onOpenAi: () -> Unit,
     onToggleLauncherMode: (() -> Unit)? = null
 ) {
     BoxWithConstraints(
@@ -245,6 +294,39 @@ private fun PortfolioNav(
                     }
                 }
 
+                val aiInteraction = remember { MutableInteractionSource() }
+                val isAiHovered by aiInteraction.collectIsHoveredAsState()
+
+                Row(
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                        .background(if (isAiHovered) AndroidGreenDarkContainer else AndroidCardDark)
+                        .border(
+                            1.dp,
+                            if (isAiHovered) AndroidGreenAccent else AndroidBorderDark,
+                            RoundedCornerShape(8.dp)
+                        ).clickable(
+                            role = Role.Button,
+                            interactionSource = aiInteraction,
+                            indication = null,
+                            onClick = onOpenAi
+                        ).padding(horizontal = 12.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = if (compact) "Ask AI" else "Ask AI ✨",
+                        color = if (isAiHovered) AndroidGreenAccent else AndroidTextWhite,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Icon(
+                        imageVector = CustomIcons.Sparkles,
+                        contentDescription = null,
+                        tint = AndroidGreenAccent,
+                        modifier = Modifier.size(13.dp)
+                    )
+                }
+
                 if (onToggleLauncherMode != null) {
                     val simInteraction = remember { MutableInteractionSource() }
                     val isSimHovered by simInteraction.collectIsHoveredAsState()
@@ -269,7 +351,7 @@ private fun PortfolioNav(
                             text = if (compact) "Simulator" else "Android Simulator",
                             color = if (isSimHovered) AndroidGreenAccent else AndroidTextWhite,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Bold
                         )
                         Icon(
                             imageVector = CustomIcons.Sparkles,

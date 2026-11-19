@@ -25,8 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +44,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.shubhrmodh.ai.AiActionTarget
 import com.app.shubhrmodh.components.CustomIcons
+import com.app.shubhrmodh.components.ai.PortfolioAiModal
 import com.app.shubhrmodh.data.PortfolioRepository
 import com.app.shubhrmodh.navigation.NavKey
 import com.app.shubhrmodh.theme.BorderWhite
@@ -65,6 +69,7 @@ fun AndroidHomeScreen(
     val scrollState = rememberScrollState()
     val dockScrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+    var showAiModal by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.fillMaxSize()) {
 
@@ -83,26 +88,55 @@ fun AndroidHomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(CobaltBlue)
-                        .clickable(role = Role.Button, onClick = onBackToPortfolio)
-                        .padding(horizontal = 14.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        imageVector = CustomIcons.ArrowBack,
-                        contentDescription = "Exit to Portfolio Website",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = "Exit Simulator (Back to Portfolio)",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFF183325))
+                            .border(1.dp, Color(0xFF2ECC71), RoundedCornerShape(20.dp))
+                            .clickable(role = Role.Button) { showAiModal = true }
+                            .padding(horizontal = 12.dp, vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = CustomIcons.Sparkles,
+                            contentDescription = "Open AI Assistant",
+                            tint = Color(0xFF2ECC71),
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = "Ask AI ✨",
+                            color = Color(0xFF2ECC71),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(CobaltBlue)
+                            .clickable(role = Role.Button, onClick = onBackToPortfolio)
+                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = CustomIcons.ArrowBack,
+                            contentDescription = "Exit to Portfolio Website",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "Exit Simulator",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
 
                 Text(
@@ -174,6 +208,7 @@ fun AndroidHomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 val appList = listOf(
+                    LauncherAppItem("Shubhr AI", CustomIcons.Sparkles) { showAiModal = true },
                     LauncherAppItem("Exit to Web", CustomIcons.ArrowBack, onBackToPortfolio),
                     LauncherAppItem("About", CustomIcons.School) { onNavigate(NavKey.About) },
                     LauncherAppItem("Experience", CustomIcons.Work) { onNavigate(NavKey.Experience) },
@@ -267,6 +302,19 @@ fun AndroidHomeScreen(
                     }
                 }
             }
+        }
+        if (showAiModal) {
+            PortfolioAiModal(
+                onActionSelected = { target ->
+                    when (target) {
+                        AiActionTarget.Projects -> onNavigate(NavKey.Projects)
+                        AiActionTarget.Experience -> onNavigate(NavKey.Experience)
+                        AiActionTarget.Skills -> onNavigate(NavKey.Skills)
+                        AiActionTarget.Contact -> onNavigate(NavKey.Contact)
+                    }
+                },
+                onDismiss = { showAiModal = false }
+            )
         }
     }
 }
