@@ -46,6 +46,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -534,6 +536,15 @@ private fun StyledTextInput(
         })
 }
 
+private val GreenArtworkMatrix = ColorMatrix(
+    floatArrayOf(
+        0.2392f / 3f, 0.2392f / 3f, 0.2392f / 3f, 0f, 0f,
+        0.8627f / 3f, 0.8627f / 3f, 0.8627f / 3f, 0f, 0f,
+        0.5176f / 3f, 0.5176f / 3f, 0.5176f / 3f, 0f, 0f,
+        0f, 0f, 0f, 1f, 0f
+    )
+)
+
 @Composable
 private fun HeroSection(
     reduceMotion: Boolean, onProjects: () -> Unit, onContact: () -> Unit
@@ -554,17 +565,30 @@ private fun HeroSection(
                     tween(400)
                 ) { it / 16 }) {
                 if (compact) {
+                    val compactZoroInteraction = remember { MutableInteractionSource() }
+                    val isCompactZoroHovered by compactZoroInteraction.collectIsHoveredAsState()
+
                     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         Box(
                             modifier = Modifier.fillMaxWidth().height(280.dp)
                                 .clip(RoundedCornerShape(16.dp)).background(AndroidCardDark)
-                                .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp))
+                                .border(
+                                    1.dp,
+                                    if (isCompactZoroHovered) AndroidGreenAccent else AndroidBorderDark,
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .clickable(
+                                    interactionSource = compactZoroInteraction,
+                                    indication = null,
+                                    onClick = {}
+                                )
                         ) {
                             Image(
                                 painter = painterResource(Res.drawable.zoro),
                                 contentDescription = "Zoro Artwork",
                                 modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
+                                colorFilter = if (isCompactZoroHovered) ColorFilter.colorMatrix(GreenArtworkMatrix) else null
                             )
                         }
 
@@ -633,6 +657,9 @@ private fun HeroSection(
                         }
                     }
                 } else {
+                    val desktopZoroInteraction = remember { MutableInteractionSource() }
+                    val isDesktopZoroHovered by desktopZoroInteraction.collectIsHoveredAsState()
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -710,13 +737,23 @@ private fun HeroSection(
                         Box(
                             modifier = Modifier.size(width = 380.dp, height = 440.dp)
                                 .clip(RoundedCornerShape(16.dp)).background(AndroidCardDark)
-                                .border(1.dp, AndroidBorderDark, RoundedCornerShape(16.dp))
+                                .border(
+                                    1.dp,
+                                    if (isDesktopZoroHovered) AndroidGreenAccent else AndroidBorderDark,
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .clickable(
+                                    interactionSource = desktopZoroInteraction,
+                                    indication = null,
+                                    onClick = {}
+                                )
                         ) {
                             Image(
                                 painter = painterResource(Res.drawable.zoro),
                                 contentDescription = "Zoro Artwork",
                                 modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
+                                colorFilter = if (isDesktopZoroHovered) ColorFilter.colorMatrix(GreenArtworkMatrix) else null
                             )
                         }
                     }
